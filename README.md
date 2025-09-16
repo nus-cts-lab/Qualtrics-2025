@@ -75,7 +75,7 @@ Follow these steps to implement the task in your Qualtrics survey:
 
 ### Step 6: Configure Question Settings
 
-1. Click the **gear icon** (Question Options) on your task question  
+1. Click the **gear icon** (Question Options) on your task question
 2. Under **"Request Response"**, select **"Off"**
 3. Ensure the question follows the correct experiment structure
 
@@ -100,6 +100,7 @@ The code has been embedded successfully!
 When you export your data from Qualtrics, it will be accessible through its `.csv` data file export. The embedded data fields will contain:
 
 **Primary Measures:**
+
 - **`taskResults`**: Complete task data in JSON format
 - **`valenceRatio`**: Proportion of positive responses (0.0-1.0) - **main outcome measure**
 - **`negativityRatio`**: Proportion of negative responses (0.0-1.0)
@@ -108,6 +109,7 @@ When you export your data from Qualtrics, it will be accessible through its `.cs
 - **`neutralCount`**: Number of neutral/ambiguous responses
 
 **Secondary Variables:**
+
 - **`memoryAccuracy`**: Whether participant recalled digits correctly
 - **`completedSentences`**: Number of sentences completed (out of 20)
 - **`totalTaskTime`**: Total time spent on task (seconds)
@@ -123,16 +125,9 @@ The task includes **automatic sentiment analysis** that:
 3. **Calculates ratios** automatically for immediate analysis
 
 **Valence Categories:**
+
 - **Positive**: More positive than negative words chosen
-- **Negative**: More negative than positive words chosen  
+- **Negative**: More negative than positive words chosen
 - **Neutral**: No clear positive/negative words used
 - **Mixed**: Equal positive and negative words chosen
 - **Incomplete**: Fewer than 5 words selected
-
-## Advanced Instructions
-
-To customize your scrambled sentence task (e.g., change the stimuli, fixation cross, or durations), you can modify the relevant sections in the `scrambled_sentence_task.html` and `scrambled_sentence_task.js` files.
-
-The most common customization might be to change the sentence stimuli. Look for the sentence arrays in the JavaScript code and modify them according to your experimental needs.
-
-Having some **basic knowledge of HTML, CSS, and JavaScript** will be helpful to ensure that no errors occur when making changes directly to the code.
