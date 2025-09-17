@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrambled Sentence Task Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- Load the HTML content -->
+    <div>
+      <span style="font-size: 24px;">
+        You should not be seeing this message for <span style="color: rgb(255, 0, 0);"><b>more than 5
+            minutes</b></span>. If you do, please screen-capture this screen, make sure that your connection is
+        stable, and re-load the page. If you continue to see this screen, please contact us with about your PC and
+        browser version. We apologize for the inconvenience.
+      </span>
+    </div>
+
+    <style>
+      #display_stage_background {
+        width: 100vw;
+        background-color: white;
+        z-index: -1;
+      }
+
+      #display_stage {
+        position: fixed;
+        left: 1vw;
+        top: 1vh;
+        height: 98vh;
+        width: 98vw;
+        background-color: white;
+        box-shadow: 1px 1px 1px #999;
+        border-radius: 15px;
+        z-index: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+
+      .task-container {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .timer-display {
+        font-size: 24px;
+        font-weight: bold;
+        color: #d32f2f;
+        margin-bottom: 20px;
+      }
+
+      .progress-display {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .sentence-container {
+        margin: 30px 0;
+        padding: 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+      }
+
+      .scrambled-words {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .word-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 10px;
+      }
+
+      .word-text {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: white;
+      }
+
+      .word-input {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        text-align: center;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+
+      .word-input:focus {
+        border-color: #2196f3;
+        outline: none;
+      }
+
+      .word-input.error {
+        border-color: #f44336;
+        background-color: #ffebee;
+      }
+
+      .submit-button {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 20px 0;
+      }
+
+      .submit-button:hover {
+        background-color: #45a049;
+      }
+
+      .submit-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+
+      .cognitive-load-display {
+        font-size: 48px;
+        font-weight: bold;
+        color: #333;
+        letter-spacing: 8px;
+        margin: 50px 0;
+      }
+
+      .black-screen {
+        background-color: black;
+        color: white;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .recall-input {
+        font-size: 24px;
+        padding: 15px;
+        width: 200px;
+        text-align: center;
+        letter-spacing: 4px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        margin: 20px;
+      }
+
+      .instruction-text {
+        font-size: 18px;
+        line-height: 1.6;
+        margin: 20px 0;
+        text-align: left;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .block-indicator {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1976d2;
+        margin-bottom: 20px;
+      }
+    </style>
+
+    <script>
+        // Mock Qualtrics object for testing
+        window.Qualtrics = {
+            SurveyEngine: {
+                setJSEmbeddedData: function(key, value) {
+                    console.log("Setting embedded data:", key, "=", value);
+                }
+            }
+        };
+
+        // Mock qthis for testing
+        var qthis = {
+            hideNextButton: function() { console.log("Next button hidden"); },
+            clickNextButton: function() { 
+                console.log("Experiment completed! Data saved.");
+                alert("Experiment completed! Check console for data output.");
+            }
+        };
+
+        // Add display stage divs
+        jQuery("<div id = 'display_stage_background'></div>").appendTo('body');
+        jQuery("<div id = 'display_stage'></div>").appendTo('body');
+
+        // Load and execute the main experiment code
+        fetch('./code/index.js')
+            .then(response => response.text())
+            .then(code => {
+                // Remove Qualtrics-specific parts and execute
+                const modifiedCode = code
+                    .replace(/Qualtrics\.SurveyEngine\.addOnload\(function \(\) \{/, '')
+                    .replace(/var qthis = this;/, '')
+                    .replace(/qthis\.hideNextButton\(\);/, '')
+                    .replace(/if \(window\.Qualtrics.*?\) \{/, 'if (true) {')
+                    .replace(/\}\);[\s]*Qualtrics\.SurveyEngine\.addOnReady.*$/s, '');
+                
+                eval(modifiedCode);
+            });
+    </script>
+</body>
+</html>
