@@ -205,15 +205,32 @@
         fetch('./code/index.js')
             .then(response => response.text())
             .then(code => {
-                // Remove Qualtrics-specific parts and execute
-                const modifiedCode = code
-                    .replace(/Qualtrics\.SurveyEngine\.addOnload\(function \(\) \{/, '')
-                    .replace(/var qthis = this;/, '')
-                    .replace(/qthis\.hideNextButton\(\);/, '')
-                    .replace(/if \(window\.Qualtrics.*?\) \{/, 'if (true) {')
-                    .replace(/\}\);[\s]*Qualtrics\.SurveyEngine\.addOnReady.*$/s, '');
+                // Extract the initExp function content more carefully
+                const initExpStart = code.indexOf('function initExp() {');
+                const initExpEnd = code.lastIndexOf('showWelcomeScreen();') + 'showWelcomeScreen();'.length;
                 
-                eval(modifiedCode);
+                if (initExpStart === -1 || initExpEnd === -1) {
+                    console.error("Could not find initExp function boundaries");
+                    return;
+                }
+                
+                // Extract just the initExp function content (without the function declaration)
+                const functionStart = code.indexOf('{', initExpStart) + 1;
+                const initExpContent = code.substring(functionStart, initExpEnd);
+                
+                // Extract the global function bindings
+                const globalBindingsStart = code.indexOf('// Make functions globally accessible');
+                const globalBindingsEnd = code.indexOf('showWelcomeScreen();', globalBindingsStart);
+                const globalBindings = code.substring(globalBindingsStart, globalBindingsEnd);
+                
+                // Combine and execute
+                const executableCode = initExpContent + '\n' + globalBindings + '\nshowWelcomeScreen();';
+                
+                console.log("Executing experiment code...");
+                eval(executableCode);
+            })
+            .catch(error => {
+                console.error("Error loading experiment code:", error);
             });
     </script>
 </body>
