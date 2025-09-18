@@ -11,7 +11,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
   jQuery("<div id = 'display_stage_background'></div>").appendTo('body');
   jQuery("<div id = 'display_stage'></div>").appendTo('body');
 
-  if (window.Qualtrics && (!window.frameElement || window.frameElement.id !== "mobile-preview-view")) {
+  if (window.Qualtrics) {
     initExp();
   }
 
