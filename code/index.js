@@ -1,22 +1,30 @@
 Qualtrics.SurveyEngine.addOnload(function () {
+  console.log("Qualtrics addOnload started");
 
   // Retrieve Qualtrics object and save in qthis
   var qthis = this;
+  console.log("qthis retrieved:", qthis);
 
   // Hide buttons
   qthis.hideNextButton();
+  console.log("Next button hidden");
 
   // Append the display_stage Div using jQuery
   // jQuery is loaded in Qualtrics by default
   jQuery("<div id = 'display_stage_background'></div>").appendTo('body');
   jQuery("<div id = 'display_stage'></div>").appendTo('body');
+  console.log("Display stage divs created");
 
   if (window.Qualtrics) {
+    console.log("Qualtrics detected, calling initExp()");
     initExp();
+  } else {
+    console.log("ERROR: Qualtrics not detected");
   }
 
   // Initialize the Scrambled Sentence Task
   function initExp() {
+    console.log("initExp() started");
 
     /* EXPERIMENT VARIABLES */
 
@@ -377,7 +385,16 @@ Qualtrics.SurveyEngine.addOnload(function () {
     /* DISPLAY FUNCTIONS */
 
     function showWelcomeScreen() {
-      document.getElementById('display_stage').innerHTML = `
+      console.log("showWelcomeScreen() called");
+      var displayStage = document.getElementById('display_stage');
+      console.log("display_stage element:", displayStage);
+      
+      if (!displayStage) {
+        console.error("ERROR: display_stage element not found!");
+        return;
+      }
+      
+      displayStage.innerHTML = `
         <div class="task-container">
           <h1>Scrambled Sentence Task</h1>
           <div class="instruction-text">
@@ -391,6 +408,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
           <button class="submit-button" onclick="startCognitiveLoad()">Start Task</button>
         </div>
       `;
+      console.log("Welcome screen HTML set successfully");
     }
 
     function showCognitiveLoad() {
