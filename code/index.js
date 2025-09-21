@@ -1,6 +1,13 @@
 Qualtrics.SurveyEngine.addOnload(function () {
   console.log("Qualtrics addOnload started");
 
+  // Prevent double execution
+  if (window.scrambledSentenceTaskInitialized) {
+    console.log("Task already initialized, skipping");
+    return;
+  }
+  window.scrambledSentenceTaskInitialized = true;
+
   // Retrieve Qualtrics object and save in qthis
   var qthis = this;
   console.log("qthis retrieved:", qthis);
@@ -17,7 +24,11 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
   if (window.Qualtrics) {
     console.log("Qualtrics detected, calling initExp()");
-    initExp();
+    try {
+      initExp();
+    } catch (error) {
+      console.error("Error in initExp():", error);
+    }
   } else {
     console.log("ERROR: Qualtrics not detected");
   }
@@ -405,23 +416,54 @@ Qualtrics.SurveyEngine.addOnload(function () {
             <p>Before each block, you will see a 6-digit number. <strong>Please memorize this number</strong> as you will need to enter it at the end of the entire task.</p>
             <p>Click the button below to begin.</p>
           </div>
-          <button class="submit-button" onclick="startCognitiveLoad()">Start Task</button>
+          <button class="submit-button" id="start-task-button">Start Task</button>
         </div>
       `;
       console.log("Welcome screen HTML set successfully");
+      
+      // Add event listener for start button
+      setTimeout(() => {
+        var startButton = document.getElementById('start-task-button');
+        if (startButton) {
+          startButton.addEventListener('click', function() {
+            console.log("Start Task button clicked");
+            try {
+              startCognitiveLoad();
+            } catch (error) {
+              console.error("Error in startCognitiveLoad:", error);
+            }
+          });
+          console.log("Start button event listener added");
+        } else {
+          console.error("Start button not found for event listener");
+        }
+      }, 100);
     }
 
     function showCognitiveLoad() {
-      document.getElementById('display_stage').innerHTML = `
+      console.log("showCognitiveLoad() called");
+      var displayStage = document.getElementById('display_stage');
+      if (!displayStage) {
+        console.error("ERROR: display_stage element not found in showCognitiveLoad!");
+        return;
+      }
+      
+      displayStage.innerHTML = `
         <div class="task-container">
           <h2>Please memorize this number:</h2>
           <div class="cognitive-load-display">${cognitiveLoadDigits}</div>
           <p>Remember this number throughout the task!</p>
         </div>
       `;
+      console.log("Cognitive load display set successfully");
       
       setTimeout(() => {
-        showBlackScreen();
+        console.log("Moving to black screen after 5 seconds");
+        try {
+          showBlackScreen();
+        } catch (error) {
+          console.error("Error in showBlackScreen:", error);
+        }
       }, 5000); // Show for 5 seconds
     }
 
@@ -493,7 +535,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
             <div class="scrambled-words">
               ${wordsHtml}
             </div>
-            <button class="submit-button" id="submit-sentence" onclick="submitSentence()" disabled>Submit Sentence</button>
+            <button class="submit-button" id="submit-sentence" disabled>Submit Sentence</button>
           </div>
         </div>
       `;
@@ -507,6 +549,20 @@ Qualtrics.SurveyEngine.addOnload(function () {
       inputs.forEach(function(input) {
         input.addEventListener('input', validateInputs);
       });
+      
+      // Add event listener for submit button
+      var submitButton = document.getElementById('submit-sentence');
+      if (submitButton) {
+        submitButton.addEventListener('click', function() {
+          console.log("Submit sentence button clicked");
+          try {
+            submitSentence();
+          } catch (error) {
+            console.error("Error in submitSentence:", error);
+          }
+        });
+        console.log("Submit sentence event listener added");
+      }
     }
 
     function validateInputs() {
@@ -551,16 +607,40 @@ Qualtrics.SurveyEngine.addOnload(function () {
           <p>Please enter the 6-digit number you were asked to remember:</p>
           <input type="text" class="recall-input" id="recall-input" maxlength="6" placeholder="######">
           <br>
-          <button class="submit-button" onclick="submitRecall()">Submit</button>
+          <button class="submit-button" id="submit-recall-button">Submit</button>
         </div>
       `;
+      
+      // Add event listener for submit button
+      setTimeout(() => {
+        var submitRecallButton = document.getElementById('submit-recall-button');
+        if (submitRecallButton) {
+          submitRecallButton.addEventListener('click', function() {
+            console.log("Submit recall button clicked");
+            try {
+              submitRecall();
+            } catch (error) {
+              console.error("Error in submitRecall:", error);
+            }
+          });
+          console.log("Submit recall event listener added");
+        } else {
+          console.error("Submit recall button not found for event listener");
+        }
+      }, 100);
     }
 
     /* TASK FLOW FUNCTIONS */
 
     function startCognitiveLoad() {
+      console.log("startCognitiveLoad() called");
       currentState = 'cognitive_load';
-      showCognitiveLoad();
+      try {
+        showCognitiveLoad();
+        console.log("showCognitiveLoad() completed successfully");
+      } catch (error) {
+        console.error("Error in showCognitiveLoad:", error);
+      }
     }
 
     function startBlock1() {
