@@ -140,17 +140,6 @@ Qualtrics.SurveyEngine.addOnload(function () {
         'background: #e3f2fd;' +
         'border-radius: 10px;' +
       '}' +
-      '.cognitive-load-reminder {' +
-        'position: fixed;' +
-        'top: 80px;' +
-        'right: 30px;' +
-        'background: #6f42c1;' +
-        'color: white;' +
-        'padding: 8px 15px;' +
-        'border-radius: 20px;' +
-        'font-size: 14px;' +
-        'z-index: 10000;' +
-      '}' +
       '@media (max-width: 768px) {' +
         '.word-item {' +
           'font-size: 16px;' +
@@ -500,11 +489,25 @@ Qualtrics.SurveyEngine.addOnload(function () {
             cognitiveLoadDigits +
           '</div>' +
           '<p style="font-size: 24px; color: #333; font-weight: bold; margin: 20px 0;">Remember this number throughout the entire task!</p>' +
-          '<p style="font-size: 18px; color: #666;">Screen will automatically continue in 5 seconds...</p>' +
+          '<p style="font-size: 18px; color: #666;">Screen will automatically continue in <span id="countdown-timer" style="font-weight: bold; color: #d32f2f;">5</span> seconds...</p>' +
         '</div>';
       },
       choices: [],
       trial_duration: 5000,
+      on_load: function() {
+        var timeLeft = 5;
+        var countdownElement = document.getElementById('countdown-timer');
+        
+        var countdown = setInterval(function() {
+          timeLeft--;
+          if (countdownElement && timeLeft >= 0) {
+            countdownElement.textContent = timeLeft;
+          }
+          if (timeLeft < 0) {
+            clearInterval(countdown);
+          }
+        }, 1000);
+      },
       data: {
         task: 'cognitive_load_display',
         cognitive_load_number: cognitiveLoadDigits
@@ -777,24 +780,46 @@ Qualtrics.SurveyEngine.addOnload(function () {
     // Block Preparation Screens
     var block1_start = {
       type: "html-keyboard-response",
-      stimulus: '<div style="font-size:20px; max-width: 600px; margin: 0 auto; text-align: center;">' +
-        '<h2>Block 1</h2>' +
+      stimulus: '<div style="' +
+        'position: absolute;' +
+        'top: 50%;' +
+        'left: 50%;' +
+        'transform: translate(-50%, -50%);' +
+        'font-size: 20px;' +
+        'max-width: 600px;' +
+        'text-align: left;' +
+        'width: 90%;' +
+      '">' +
+        '<h2 style="text-align: center;">Block 1</h2>' +
+        '<br>' +
         '<p>You will now begin the first block of 20 scrambled sentences.</p>' +
         '<p><strong>Remember:</strong> You have <span style="color: #dc3545;">4 minutes</span> to complete as many sentences as possible.</p>' +
         '<p>Keep the number <strong>' + cognitiveLoadDigits + '</strong> in mind throughout the task.</p>' +
-        '<p>Press SPACEBAR to start Block 1.</p>' +
+        '<br>' +
+        '<p style="text-align: center;"><strong>Press SPACEBAR to start Block 1.</strong></p>' +
       '</div>',
       choices: [" "]
     };
 
     var block2_start = {
       type: "html-keyboard-response", 
-      stimulus: '<div style="font-size:20px; max-width: 600px; margin: 0 auto; text-align: center;">' +
-        '<h2>Block 2</h2>' +
+      stimulus: '<div style="' +
+        'position: absolute;' +
+        'top: 50%;' +
+        'left: 50%;' +
+        'transform: translate(-50%, -50%);' +
+        'font-size: 20px;' +
+        'max-width: 600px;' +
+        'text-align: left;' +
+        'width: 90%;' +
+      '">' +
+        '<h2 style="text-align: center;">Block 2</h2>' +
+        '<br>' +
         '<p>You will now begin the second block of 20 scrambled sentences.</p>' +
         '<p><strong>Remember:</strong> You have <span style="color: #dc3545;">4 minutes</span> to complete as many sentences as possible.</p>' +
         '<p>Keep the number <strong>' + cognitiveLoadDigits + '</strong> in mind throughout the task.</p>' +
-        '<p>Press SPACEBAR to start Block 2.</p>' +
+        '<br>' +
+        '<p style="text-align: center;"><strong>Press SPACEBAR to start Block 2.</strong></p>' +
       '</div>',
       choices: [" "]
     };
