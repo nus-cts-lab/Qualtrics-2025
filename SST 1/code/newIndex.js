@@ -188,6 +188,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
     // Cognitive load tracking variables
     var cognitiveLoadRecall = "";
     var cognitiveLoadAccuracy = 0;
+    
+    // Timer expiration tracking
+    var timerExpired = false;
 
     // Scrambled Sentence Stimuli - List 1
     var list1_sentences = [
@@ -419,6 +422,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
       stimulus: `
         <div style="font-size:20px; max-width: 600px; margin: 0 auto; text-align: center;">
           <h2>Number Recall</h2>
+          <br>
           <p>Please enter the 6-digit number you were asked to remember:</p>
           <input type="text" id="recall-input" maxlength="6" style="
             font-size: 24px; 
@@ -435,25 +439,45 @@ Qualtrics.SurveyEngine.addOnload(function () {
       `,
       choices: ['Submit'],
       on_load: function() {
-        // Focus on the input field
-        document.getElementById('recall-input').focus();
+        // Store reference to input value for later use
+        window.cognitiveLoadInputValue = "";
         
-        // Allow Enter key to submit
-        document.getElementById('recall-input').addEventListener('keypress', function(e) {
-          if (e.key === 'Enter') {
-            document.querySelector('button').click();
-          }
-        });
+        // Focus on the input field with null check
+        var inputElement = document.getElementById('recall-input');
+        if (inputElement) {
+          inputElement.focus();
+          
+          // Update stored value whenever input changes
+          inputElement.addEventListener('input', function(e) {
+            window.cognitiveLoadInputValue = e.target.value;
+          });
+          
+          // Allow Enter key to submit
+          inputElement.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              window.cognitiveLoadInputValue = e.target.value; // Ensure we capture latest value
+              var submitButton = document.querySelector('button');
+              if (submitButton) {
+                submitButton.click();
+              }
+            }
+          });
+        } else {
+          console.warn('Could not find recall-input element for focus/event binding');
+        }
       },
       on_finish: function(data) {
-        // Get the recalled number
-        cognitiveLoadRecall = document.getElementById('recall-input').value;
+        // Use the stored value instead of trying to read from DOM
+        cognitiveLoadRecall = window.cognitiveLoadInputValue || "";
         cognitiveLoadAccuracy = (cognitiveLoadRecall === cognitiveLoadDigits) ? 1 : 0;
         
         // Store in trial data
         data.cognitive_load_recall = cognitiveLoadRecall;
         data.cognitive_load_accuracy = cognitiveLoadAccuracy;
         data.cognitive_load_correct = cognitiveLoadDigits;
+        
+        // Clean up
+        delete window.cognitiveLoadInputValue;
       }
     };
 
@@ -463,6 +487,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
       stimulus: `
         <div style="font-size:20px; max-width: 600px; margin: 0 auto; text-align: center;">
           <h2>Task Complete!</h2>
+          <br>
           <p>Thank you for participating in the Scrambled Sentence Task.</p>
           <p>Press SPACEBAR to finish.</p>
         </div>
@@ -535,7 +560,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
         return '<div class="sentence-container">' +
           '<div class="progress-info">' +
-            '<div><strong>Main Trials</strong> - Sentence ' + sentenceNumber + ' of 20</div>' +
+            '<div><strong>' + blockNumber + '</strong> - Sentence ' + sentenceNumber + ' of ' + (blockNumber === 'Practice' ? '3' : '20') + '</div>' +
           '</div>' +
           '<h3>Click words in order (1-5) to unscramble the sentence:</h3>' +
           '<div class="word-container">' + wordButtons + '</div>' +
@@ -775,6 +800,10 @@ Qualtrics.SurveyEngine.addOnload(function () {
       timeline: [sentence_trial],
       timeline_variables: main_timeline_variables,
       conditional_function: function() {
+        // Stop if timer has expired
+        if (timerExpired) {
+          return false;
+        }
         // Check if 4 minutes (240000ms) have elapsed since main trials start
         var allData = jsPsych.data.get().filter({task: 'main_start'});
         if (allData.count() > 0) {
@@ -804,7 +833,12 @@ Qualtrics.SurveyEngine.addOnload(function () {
           if (timeLeft <= 0) {
             clearInterval(timer);
             timerDiv.innerHTML = '0:00';
-            // End the timeline
+            // Set timer expired flag
+            timerExpired = true;
+            
+            // Force the current trial to end immediately
+            jsPsych.finishTrial();
+            // End the current timeline - will take effect after current trial ends
             jsPsych.endCurrentTimeline();
           }
         }, 1000);
@@ -846,6 +880,8 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
       // Adding the clean up and continue functions
       on_finish: function (data) {
+
+        // Note: Cognitive load recall always runs now, regardless of timer expiration
 
         // Extract cognitive load data
         Qualtrics.SurveyEngine.setJSEmbeddedData("cognitive_load_digits", cognitiveLoadDigits);
@@ -896,6 +932,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         console.log("Cognitive Load Accuracy:", cognitiveLoadAccuracy);
         console.log("Practice Completed:", practice_total);
         console.log("Main Trials Completed:", main_total);
+        console.log("Timer Expired:", timerExpired);
 
         // Clear the stage
         jQuery('#display_stage').remove();

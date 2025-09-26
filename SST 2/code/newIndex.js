@@ -189,131 +189,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
     var cognitiveLoadRecall = "";
     var cognitiveLoadAccuracy = 0;
 
-    // Scrambled Sentence Stimuli - List 1 (Block 1)
-    var list1_sentences = [
-      { 
-        words: ["Life", "is", "good", "cruel", "to", "me"], 
-        positive_word: "good", 
-        negative_word: "cruel",
-        negative_category: "D"
-      },
-      { 
-        words: ["I", "want", "to", "keep", "stop", "trying"], 
-        positive_word: "keep", 
-        negative_word: "stop",
-        negative_category: "D"
-      },
-      { 
-        words: ["I", "expect", "to", "be", "happy", "miserable"], 
-        positive_word: "happy", 
-        negative_word: "miserable",
-        negative_category: "D"
-      },
-      { 
-        words: ["I", "usually", "feel", "very", "good", "bad"], 
-        positive_word: "good", 
-        negative_word: "bad",
-        negative_category: "D"
-      },
-      { 
-        words: ["Something", "Nothing", "is", "wrong", "with", "me"], 
-        positive_word: "Nothing", 
-        negative_word: "Something",
-        negative_category: "D"
-      },
-      { 
-        words: ["I", "have", "succeeded", "failed", "at", "life"], 
-        positive_word: "succeeded", 
-        negative_word: "failed",
-        negative_category: "D"
-      },
-      { 
-        words: ["I", "like", "dislike", "who", "I", "am"], 
-        positive_word: "like", 
-        negative_word: "dislike",
-        negative_category: "D"
-      },
-      { 
-        words: ["I", "have", "something", "nothing", "to", "give"], 
-        positive_word: "something", 
-        negative_word: "nothing",
-        negative_category: "D"
-      },
-      { 
-        words: ["My", "life", "is", "very", "interesting", "stressful"], 
-        positive_word: "interesting", 
-        negative_word: "stressful",
-        negative_category: "D"
-      },
-      { 
-        words: ["I", "am", "confident", "disappointed", "in", "myself"], 
-        positive_word: "confident", 
-        negative_word: "disappointed",
-        negative_category: "D"
-      },
-      { 
-        words: ["I", "daydream", "worry", "about", "the", "future"], 
-        positive_word: "daydream", 
-        negative_word: "worry",
-        negative_category: "GA"
-      },
-      { 
-        words: ["I", "do", "dont", "sleep", "very", "well"], 
-        positive_word: "do", 
-        negative_word: "dont",
-        negative_category: "GA"
-      },
-      { 
-        words: ["I", "often", "feel", "very", "happy", "tense"], 
-        positive_word: "happy", 
-        negative_word: "tense",
-        negative_category: "GA"
-      },
-      { 
-        words: ["I", "face", "avoid", "my", "worst", "fears"], 
-        positive_word: "face", 
-        negative_word: "avoid",
-        negative_category: "GA"
-      },
-      { 
-        words: ["I", "am", "always", "on", "form", "edge"], 
-        positive_word: "form", 
-        negative_word: "edge",
-        negative_category: "GA"
-      },
-      { 
-        words: ["I", "appear", "sensible", "foolish", "to", "others"], 
-        positive_word: "sensible", 
-        negative_word: "foolish",
-        negative_category: "GA"
-      },
-      { 
-        words: ["People", "laugh", "at", "my", "jokes", "clothes"], 
-        positive_word: "jokes", 
-        negative_word: "clothes",
-        negative_category: "GA"
-      },
-      { 
-        words: ["People", "think", "I", "am", "nice", "boring"], 
-        positive_word: "nice", 
-        negative_word: "boring",
-        negative_category: "GA"
-      },
-      { 
-        words: ["I", "usually", "enjoy", "endure", "social", "engagements"], 
-        positive_word: "enjoy", 
-        negative_word: "endure",
-        negative_category: "GA"
-      },
-      { 
-        words: ["I", "usually", "attend", "avoid", "social", "events"], 
-        positive_word: "attend", 
-        negative_word: "avoid",
-        negative_category: "GA"
-      }
-    ];
-
-    // Scrambled Sentence Stimuli - List 2 (Block 2)
+        // Scrambled Sentence Stimuli - List 2
     var list2_sentences = [
       { 
         words: ["I", "am", "equal", "inferior", "to", "others"], 
@@ -412,7 +288,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         negative_category: "GA"
       },
       { 
-        words: ["People", "notice", "my", "talents", "mistakes"], 
+        words: ["People", "always", "notice", "my", "talents", "mistakes"], 
         positive_word: "talents", 
         negative_word: "mistakes",
         negative_category: "GA"
@@ -437,9 +313,32 @@ Qualtrics.SurveyEngine.addOnload(function () {
       }
     ];
 
-    // Shuffle both sentence lists
+
+    // Practice Sentences
+    var practice_sentences = [
+      { 
+        words: ["The", "computer", "printer", "does", "not", "work"], 
+        positive_word: "computer", 
+        negative_word: "printer",
+        negative_category: "P"
+      },
+      { 
+        words: ["I", "have", "bought", "yellow", "green", "bananas"], 
+        positive_word: "yellow", 
+        negative_word: "green",
+        negative_category: "P"
+      },
+      { 
+        words: ["The", "sun", "is", "already", "setting", "rising"], 
+        positive_word: "setting", 
+        negative_word: "rising",
+        negative_category: "P"
+      }
+    ];
+
+    // Shuffle sentence lists
     shuffleArray(list1_sentences);
-    shuffleArray(list2_sentences);
+    shuffleArray(practice_sentences);
 
     /**
      * EXPERIMENT TIMELINE
@@ -468,8 +367,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
             <p><strong>Instructions:</strong></p>
             <p>1. In this task, you will see scrambled sentences made up of 6 words. Your job is to <strong>unscramble each sentence to form whatever statement comes to mind first</strong>, using exactly 5 of the 6 words provided.</p>
             <p>2. Please do this by clicking words in the order you want them to appear (1-5).</p>
-            <p>3. There are two blocks of 20 sentences each. You will have <strong>4 minutes</strong> to complete each block, so work as <strong>quickly as possible</strong>.</p>
-            <p>4. Before each block, you will see a 6-digit number. <strong>Please memorize this number</strong> as you will need to enter it at the end of the entire task.</p>
+            <p>3. You will start with a few <strong>practice rounds</strong> to get familiar with the task.</p>
+            <p>4. Then there are the main trials with 20 sentences. You will have <strong>4 minutes</strong> to complete as many as possible, so work as <strong>quickly as possible</strong>.</p>
+            <p>5. Before the main trials, you will see a 6-digit number. <strong>Please memorize this number</strong> as you will need to enter it at the end of the entire task.</p>
             <br>
             <p style="text-align: center;"><strong>Press SPACEBAR to begin.</strong></p>
           </div>
@@ -564,6 +464,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
       stimulus: `
         <div style="font-size:20px; max-width: 600px; margin: 0 auto; text-align: center;">
           <h2>Task Complete!</h2>
+          <br>
           <p>Thank you for participating in the Scrambled Sentence Task.</p>
           <p>Press SPACEBAR to finish.</p>
         </div>
@@ -636,7 +537,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
         return '<div class="sentence-container">' +
           '<div class="progress-info">' +
-            '<div><strong>Block ' + blockNumber + '</strong> - Sentence ' + sentenceNumber + ' of 20</div>' +
+            '<div><strong>Main Trials</strong> - Sentence ' + sentenceNumber + ' of 20</div>' +
           '</div>' +
           '<h3>Click words in order (1-5) to unscramble the sentence:</h3>' +
           '<div class="word-container">' + wordButtons + '</div>' +
@@ -778,7 +679,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
     };
 
     // Block Preparation Screens
-    var block1_start = {
+    var practice_start = {
       type: "html-keyboard-response",
       stimulus: '<div style="' +
         'position: absolute;' +
@@ -790,19 +691,19 @@ Qualtrics.SurveyEngine.addOnload(function () {
         'text-align: left;' +
         'width: 90%;' +
       '">' +
-        '<h2 style="text-align: center;">Block 1</h2>' +
+        '<h2 style="text-align: center;">Practice Rounds</h2>' +
         '<br>' +
-        '<p>You will now begin the first block of 20 scrambled sentences.</p>' +
-        '<p><strong>Remember:</strong> You have <span style="color: #dc3545;">4 minutes</span> to complete as many sentences as possible.</p>' +
-        '<p>Keep the number <strong>' + cognitiveLoadDigits + '</strong> in mind throughout the task.</p>' +
+        '<p>Let\'s start with a few practice sentences to get familiar with the task.</p>' +
+        '<p>You will see 3 practice sentences. Take your time to understand how the task works.</p>' +
+        '<p><strong>Remember:</strong> Click 5 words in the order you want them to appear to form a sentence.</p>' +
         '<br>' +
-        '<p style="text-align: center;"><strong>Press SPACEBAR to start Block 1.</strong></p>' +
+        '<p style="text-align: center;"><strong>Press SPACEBAR to start the practice.</strong></p>' +
       '</div>',
       choices: [" "]
     };
 
-    var block2_start = {
-      type: "html-keyboard-response", 
+    var practice_complete = {
+      type: "html-keyboard-response",
       stimulus: '<div style="' +
         'position: absolute;' +
         'top: 50%;' +
@@ -813,96 +714,71 @@ Qualtrics.SurveyEngine.addOnload(function () {
         'text-align: left;' +
         'width: 90%;' +
       '">' +
-        '<h2 style="text-align: center;">Block 2</h2>' +
+        '<h2 style="text-align: center;">Practice Complete!</h2>' +
         '<br>' +
-        '<p>You will now begin the second block of 20 scrambled sentences.</p>' +
-        '<p><strong>Remember:</strong> You have <span style="color: #dc3545;">4 minutes</span> to complete as many sentences as possible.</p>' +
-        '<p>Keep the number <strong>' + cognitiveLoadDigits + '</strong> in mind throughout the task.</p>' +
+        '<p>Great job! You\'ve completed the practice rounds.</p>' +
+        '<p>Now you\'re ready for the main task. You will see a number to memorize, then complete the main trials with 20 sentences.</p>' +
+        '<p><strong>Remember:</strong> Work as quickly as possible during the main blocks!</p>' +
         '<br>' +
-        '<p style="text-align: center;"><strong>Press SPACEBAR to start Block 2.</strong></p>' +
+        '<p style="text-align: center;"><strong>Press SPACEBAR to continue.</strong></p>' +
       '</div>',
       choices: [" "]
     };
 
-    // Create timeline variables for Block 1
-    var block1_timeline_variables = list1_sentences.map(function(sentence, index) {
-      return {
-        sentence: sentence,
-        block: 1,
-        sentence_number: index + 1
-      };
-    });
-
-    // Create timeline variables for Block 2  
-    var block2_timeline_variables = list2_sentences.map(function(sentence, index) {
-      return {
-        sentence: sentence,
-        block: 2,
-        sentence_number: index + 1
-      };
-    });
-
-    // Block 1 Procedure (4-minute time limit)
-    var block1_procedure = {
-      timeline: [sentence_trial],
-      timeline_variables: block1_timeline_variables,
-      conditional_function: function() {
-        // Check if 4 minutes (240000ms) have elapsed since block start
-        var allData = jsPsych.data.get().filter({task: 'block1_start'});
-        if (allData.count() > 0) {
-          var blockStartTime = allData.select('time_elapsed').values[0];
-          var currentTime = jsPsych.totalTime();
-          var timeElapsed = currentTime - blockStartTime;
-          return timeElapsed < 240000; // 4 minutes in milliseconds
-        }
-        return true;
-      },
-      on_timeline_start: function() {
-        // Add timer display
-        var timerDiv = document.createElement('div');
-        timerDiv.id = 'block-timer';
-        timerDiv.className = 'timer-display';
-        timerDiv.innerHTML = '4:00';
-        document.body.appendChild(timerDiv);
-        
-        // Start countdown
-        var timeLeft = 240; // 4 minutes in seconds
-        var timer = setInterval(function() {
-          timeLeft--;
-          var minutes = Math.floor(timeLeft / 60);
-          var seconds = timeLeft % 60;
-          timerDiv.innerHTML = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-          
-          if (timeLeft <= 0) {
-            clearInterval(timer);
-            timerDiv.innerHTML = '0:00';
-            // End the timeline
-            jsPsych.endCurrentTimeline();
-          }
-        }, 1000);
-        
-        // Store timer reference
-        window.currentBlockTimer = timer;
-      },
-      on_timeline_finish: function() {
-        // Clean up timer
-        if (window.currentBlockTimer) {
-          clearInterval(window.currentBlockTimer);
-        }
-        var timerDiv = document.getElementById('block-timer');
-        if (timerDiv) {
-          timerDiv.remove();
-        }
-      }
+    var main_start = {
+      type: "html-keyboard-response",
+      stimulus: '<div style="' +
+        'position: absolute;' +
+        'top: 50%;' +
+        'left: 50%;' +
+        'transform: translate(-50%, -50%);' +
+        'font-size: 20px;' +
+        'max-width: 600px;' +
+        'text-align: left;' +
+        'width: 90%;' +
+      '">' +
+        '<h2 style="text-align: center;">Main Trials</h2>' +
+        '<br>' +
+        '<p>You will now begin the main block of 20 scrambled sentences.</p>' +
+        '<p><strong>Remember:</strong> You have <span style="color: #dc3545;">4 minutes</span> to complete as many sentences as possible.</p>' +
+        '<p>Keep the number <strong>' + cognitiveLoadDigits + '</strong> in mind throughout the task.</p>' +
+        '<br>' +
+        '<p style="text-align: center;"><strong>Press SPACEBAR to start the Main Trials.</strong></p>' +
+      '</div>',
+      choices: [" "]
     };
 
-    // Block 2 Procedure (4-minute time limit)
-    var block2_procedure = {
+    // Create timeline variables for Practice
+    var practice_timeline_variables = practice_sentences.map(function(sentence, index) {
+      return {
+        sentence: sentence,
+        block: "Practice",
+        sentence_number: index + 1
+      };
+    });
+
+    // Create timeline variables for Main Trials
+    var main_timeline_variables = list1_sentences.map(function(sentence, index) {
+      return {
+        sentence: sentence,
+        block: "Main",
+        sentence_number: index + 1
+      };
+    });
+
+    // Practice Procedure (no time limit)
+    var practice_procedure = {
       timeline: [sentence_trial],
-      timeline_variables: block2_timeline_variables,
+      timeline_variables: practice_timeline_variables
+    };
+
+    // Main Trials Procedure (4-minute time limit)
+    var main_procedure = {
+      timeline: [sentence_trial],
+      timeline_variables: main_timeline_variables,
       conditional_function: function() {
-        // Check if 4 minutes (240000ms) have elapsed since block start
-        var allData = jsPsych.data.get().filter({task: 'block2_start'});
+        // Check if 4 minutes (240000ms) have elapsed since main trials start
+        var allData = jsPsych.data.get().filter({task: 'main_start'});
         if (allData.count() > 0) {
           var blockStartTime = allData.select('time_elapsed').values[0];
           var currentTime = jsPsych.totalTime();
@@ -951,16 +827,17 @@ Qualtrics.SurveyEngine.addOnload(function () {
     };
 
     // Add block start markers for timing
-    block1_start.data = { task: 'block1_start' };
-    block2_start.data = { task: 'block2_start' };
+    practice_start.data = { task: 'practice_start' };
+    main_start.data = { task: 'main_start' };
 
     // Build complete experiment timeline
     experiment_timeline.push(instructions);
+    experiment_timeline.push(practice_start);
+    experiment_timeline.push(practice_procedure);
+    experiment_timeline.push(practice_complete);
     experiment_timeline.push(cognitive_load_display);
-    experiment_timeline.push(block1_start);
-    experiment_timeline.push(block1_procedure);
-    experiment_timeline.push(block2_start);
-    experiment_timeline.push(block2_procedure);
+    experiment_timeline.push(main_start);
+    experiment_timeline.push(main_procedure);
     experiment_timeline.push(cognitive_load_recall);
     experiment_timeline.push(task_complete);
 
@@ -977,50 +854,50 @@ Qualtrics.SurveyEngine.addOnload(function () {
         Qualtrics.SurveyEngine.setJSEmbeddedData("cognitive_load_recall", cognitiveLoadRecall);
         Qualtrics.SurveyEngine.setJSEmbeddedData("cognitive_load_accuracy", cognitiveLoadAccuracy);
 
-        // Get sentence completion data for both blocks  
-        var block1_trials = jsPsych.data.get().filter({ 
+        // Get sentence completion data for practice and main trials
+        var practice_trials = jsPsych.data.get().filter({ 
           task: 'sentence_completion',
-          block: 1
+          block: "Practice"
         });
-        var block2_trials = jsPsych.data.get().filter({ 
+        var main_trials = jsPsych.data.get().filter({ 
           task: 'sentence_completion',
-          block: 2  
+          block: "Main"
         });
 
-        // Process Block 1 data
-        var block1_word_orders = block1_trials.select('word_order').values.map(function(order) { return order.join(','); });
-        var block1_sentences = block1_trials.select('completed_sentence').values;
-        var block1_interpretations = block1_trials.select('interpretation').values;
-        var block1_times = block1_trials.select('rt').values;
-        var block1_total = block1_trials.count();
+        // Process Practice data
+        var practice_word_orders = practice_trials.select('word_order').values.map(function(order) { return order.join(','); });
+        var practice_sentences = practice_trials.select('completed_sentence').values;
+        var practice_interpretations = practice_trials.select('interpretation').values;
+        var practice_times = practice_trials.select('rt').values;
+        var practice_total = practice_trials.count();
 
-        // Process Block 2 data
-        var block2_word_orders = block2_trials.select('word_order').values.map(function(order) { return order.join(','); });
-        var block2_sentences = block2_trials.select('completed_sentence').values;
-        var block2_interpretations = block2_trials.select('interpretation').values;
-        var block2_times = block2_trials.select('rt').values;
-        var block2_total = block2_trials.count();
+        // Process Main Trials data
+        var main_word_orders = main_trials.select('word_order').values.map(function(order) { return order.join(','); });
+        var main_sentences = main_trials.select('completed_sentence').values;
+        var main_interpretations = main_trials.select('interpretation').values;
+        var main_times = main_trials.select('rt').values;
+        var main_total = main_trials.count();
 
-        // Export Block 1 data to Qualtrics
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block1_sentence_completions", block1_word_orders.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block1_sentences", block1_sentences.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block1_sentence_interpretations", block1_interpretations.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block1_completion_times", block1_times.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block1_total_completed", block1_total);
+        // Export Practice data to Qualtrics
+        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_sentence_completions", practice_word_orders.join(';'));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_sentences", practice_sentences.join(';'));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_sentence_interpretations", practice_interpretations.join(';'));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_completion_times", practice_times.join(';'));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_total_completed", practice_total);
 
-        // Export Block 2 data to Qualtrics
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block2_sentence_completions", block2_word_orders.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block2_sentences", block2_sentences.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block2_sentence_interpretations", block2_interpretations.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block2_completion_times", block2_times.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("block2_total_completed", block2_total);
+        // Export Main Trials data to Qualtrics
+        Qualtrics.SurveyEngine.setJSEmbeddedData("main_sentence_completions", main_word_orders.join(';'));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("main_sentences", main_sentences.join(';'));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("main_sentence_interpretations", main_interpretations.join(';'));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("main_completion_times", main_times.join(';'));
+        Qualtrics.SurveyEngine.setJSEmbeddedData("main_total_completed", main_total);
 
         console.log("Scrambled Sentence Task Data Export Summary:");
         console.log("Cognitive Load Digits:", cognitiveLoadDigits);
         console.log("Cognitive Load Recall:", cognitiveLoadRecall);
         console.log("Cognitive Load Accuracy:", cognitiveLoadAccuracy);
-        console.log("Block 1 Completed:", block1_total);
-        console.log("Block 2 Completed:", block2_total);
+        console.log("Practice Completed:", practice_total);
+        console.log("Main Trials Completed:", main_total);
 
         // Clear the stage
         jQuery('#display_stage').remove();

@@ -442,6 +442,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
       type: "html-keyboard-response",
       stimulus: '<div style="font-size:20px; max-width: 600px; margin: 0 auto; text-align: center;">' +
         '<h2>Task Complete!</h2>' +
+        '<br>' +
         '<p>Thank you for participating in the Ambiguous Scenarios Task.</p>' +
         '<p>Press SPACEBAR to finish.</p>' +
         '</div>',
