@@ -10,9 +10,10 @@ For any questions, please open new issues on this repository - and if you wish t
 
 **Procedure:**
 
-- Participants unscramble 40 sentences (2 blocks of 20 each) using 5 out of 6 scrambled words
+- Participants start with 3 practice sentences to familiarize themselves with the task
+- Then unscramble 20 sentences in the main trials using 5 out of 6 scrambled words
 - Each sentence can be completed in either a positive or negative way
-- 4-minute time limit per block with cognitive load manipulation
+- 4-minute time limit for the main trials with cognitive load manipulation
 - 6-digit number memorization throughout the entire task
 
 **Measures:**
@@ -106,16 +107,16 @@ Here, what you need to do is to create 13 separate data entries named:
 - `cognitive_load_digits`
 - `cognitive_load_recall`
 - `cognitive_load_accuracy`
-- `block1_sentence_completions`
-- `block1_sentences`
-- `block1_sentence_interpretations`
-- `block1_completion_times`
-- `block1_total_completed`
-- `block2_sentence_completions`
-- `block2_sentences`
-- `block2_sentence_interpretations`
-- `block2_completion_times`
-- `block2_total_completed`
+- `practice_sentence_completions`
+- `practice_sentences`
+- `practice_sentence_interpretations`
+- `practice_completion_times`
+- `practice_total_completed`
+- `main_sentence_completions`
+- `main_sentences`
+- `main_sentence_interpretations`
+- `main_completion_times`
+- `main_total_completed`
 
 When you do this, Qualtrics will automatically log these data, and it will be accessible through its `.csv` data file export. After you have included all data fields, it should look similar to this:
 
@@ -139,14 +140,23 @@ The experiment collects the following data:
 - `cognitive_load_recall`: Participant's attempted recall
 - `cognitive_load_accuracy`: Whether recall was correct (1/0)
 
-**Sentence Completion Data (per block):**
+**Sentence Completion Data:**
 
-- `block1_sentence_completions`: Word ordering choices (e.g., "3,1,5,2,4;1,4,2,5,3;...")
-- `block1_sentences`: Actual sentences constructed by participants (e.g., "Life is good to me;I want to keep trying;...")
-- `block1_sentence_interpretations`: Classification as positive/negative_D/negative_GA/mixed/unclear
-- `block1_completion_times`: Time in milliseconds per sentence
-- `block1_total_completed`: Number of sentences finished within time limit
-- (Same fields for `block2_`)
+**Practice Data:**
+
+- `practice_sentence_completions`: Word ordering choices for practice sentences (e.g., "3,1,5,2,4;1,4,2,5,3;...")
+- `practice_sentences`: Actual sentences constructed during practice (e.g., "I visit the theatre often;I expect to see snow;...")
+- `practice_sentence_interpretations`: Classification of practice sentences
+- `practice_completion_times`: Time in milliseconds per practice sentence
+- `practice_total_completed`: Number of practice sentences completed
+
+**Main Trials Data:**
+
+- `main_sentence_completions`: Word ordering choices (e.g., "3,1,5,2,4;1,4,2,5,3;...")
+- `main_sentences`: Actual sentences constructed by participants (e.g., "Life is good to me;I want to keep trying;...")
+- `main_sentence_interpretations`: Classification as positive/negative_D/negative_GA/mixed/unclear
+- `main_completion_times`: Time in milliseconds per sentence
+- `main_total_completed`: Number of sentences finished within time limit
 
 **Interpretation Classifications:**
 
@@ -161,21 +171,23 @@ The experiment collects the following data:
 The code for the Scrambled Sentence Task is contained inside `code/index.js` file.
 
 **Customizing Stimuli:**
-To modify sentences, locate the `list1_sentences` and `list2_sentences` arrays starting around line 37. Each sentence follows this format:
+To modify sentences, locate the `list1_sentences` array (main trials, starting around line 193) and `practice_sentences` array (practice rounds, starting around line 317). Each sentence follows this format:
 
 ```js
 {
   words: ["Life", "is", "good", "cruel", "to", "me"],
   positive_word: "good",
-  negative_word: "cruel"
+  negative_word: "cruel",
+  negative_category: "D"
 }
 ```
 
 - `words`: Array of 6 scrambled words (5 used + 1 distractor)
 - `positive_word` / `negative_word`: Critical words for automatic classification of completed sentences
+- `negative_category`: Category for the negative word ("D" for Dysphoric, "GA" for General Anxiety, "P" for Practice)
 
 **Customizing Timing:**
 
-- Block duration: Change `timeRemaining = 240` (line 296, 523, 542) for different time limits
-- Cognitive load display: Modify timeout in `showCognitiveLoad()` (line 399)
-- Black screen duration: Modify timeout in `showBlackScreen()` (line 415)
+- Main trials duration: Change `240000` (around line 784) for different time limits (currently 4 minutes = 240,000ms)
+- Cognitive load display: Modify `trial_duration: 5000` (around line 395) to change how long the 6-digit number is shown (currently 5 seconds)
+- Practice rounds have no time limit by design to allow familiarization
