@@ -508,7 +508,6 @@ Qualtrics.SurveyEngine.addOnload(function () {
         Qualtrics.SurveyEngine.setEmbeddedData("main_scenario_ids", main_scenario_ids.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("main_scenario_themes", main_themes.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("list_assignment", "1");
-        Qualtrics.SurveyEngine.setEmbeddedData("total_scenarios_completed", main_ratings.filter(r => r !== null).length.toString());
         
         console.log("AST1 Data Export Summary:");
         console.log("Practice scenarios completed:", practice_trials.count());
