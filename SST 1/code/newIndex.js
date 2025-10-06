@@ -367,10 +367,15 @@ Qualtrics.SurveyEngine.addOnload(function () {
           <br>
           <div style="text-align: left; line-height: 1.6; margin: 20px 0;">
             <p><strong>Instructions:</strong></p>
+            <br>
             <p>1. In this task, you will see scrambled sentences made up of 6 words. Your job is to <strong>unscramble each sentence to form whatever statement comes to mind first</strong>, using exactly 5 of the 6 words provided.</p>
+            <br>
             <p>2. Please do this by clicking words in the order you want them to appear (1-5).</p>
+            <br>
             <p>3. You will start with a few <strong>practice rounds</strong> to get familiar with the task.</p>
+            <br>
             <p>4. Then there are the main trials with 20 sentences. You will have <strong>4 minutes</strong> to complete as many as possible, so work as <strong>quickly as possible</strong>.</p>
+            <br>
             <p>5. Before the main trials, you will see a 6-digit number. <strong>Please memorize this number</strong> as you will need to enter it at the end of the entire task.</p>
             <br>
             <p style="text-align: center;"><strong>Press SPACEBAR to begin.</strong></p>
@@ -740,7 +745,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Practice Complete!</h2>' +
         '<br>' +
         '<p>Great job! You\'ve completed the practice rounds.</p>' +
+        '<br>' +
         '<p>Now you\'re ready for the main task. You will see a number to memorize, then complete the main trials with 20 sentences.</p>' +
+        '<br>' +
         '<p><strong>Remember:</strong> Work as quickly as possible during the main blocks!</p>' +
         '<br>' +
         '<p style="text-align: center;"><strong>Press SPACEBAR to continue.</strong></p>' +
@@ -763,7 +770,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Main Trials</h2>' +
         '<br>' +
         '<p>You will now begin the main block of 20 scrambled sentences.</p>' +
+        '<br>' +
         '<p><strong>Remember:</strong> You have <span style="color: #dc3545;">4 minutes</span> to complete as many sentences as possible.</p>' +
+        '<br>' +
         '<p>Keep the number <strong>' + cognitiveLoadDigits + '</strong> in mind throughout the task.</p>' +
         '<br>' +
         '<p style="text-align: center;"><strong>Press SPACEBAR to start the Main Trials.</strong></p>' +

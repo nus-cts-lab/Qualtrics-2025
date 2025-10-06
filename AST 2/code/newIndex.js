@@ -135,6 +135,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
       "As you reach home, you see that the lights are on. It must mean that someone is at home."
     ];
 
+    // Get participant ID from Qualtrics
+    var ppt = "${e://Field/PROLIFIC_PID}" || "AST2_" + Math.random().toString(36).substr(2, 9);
+
     // Main task scenarios (List 2)
     var mainScenarios = [
       // Depression scenarios (List 2)
@@ -221,16 +224,15 @@ Qualtrics.SurveyEngine.addOnload(function () {
       }
     ];
 
-    // Data collection arrays
-    var practiceRatings = [];
-    var practiceDescriptions = [];
-    var practiceResponseTimes = [];
-    
-    var mainRatings = [];
-    var mainDescriptions = [];
-    var mainResponseTimes = [];
-    var mainScenarioIds = [];
-    var mainThemes = [];
+    // Convert practice scenarios to timeline variables format
+    var practice_stimuli = practiceScenarios.map(function(scenario, index) {
+      return {
+        scenario_text: scenario,
+        scenario_index: index,
+        phase: 'practice',
+        total_scenarios: practiceScenarios.length
+      };
+    });
 
     // Task instructions
     var initialInstructions = {
@@ -239,98 +241,98 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Ambiguous Scenarios Task</h2>' +
         '<br>' +
         '<p><strong>Instructions:</strong></p>' +
-        '<p>In this task, you will be presented with short scenarios. Form a mental image of each scenario. Imagine each scenario happening to you personally. Follow the first image that comes to mind and do not think too much about each one. Then rate how pleasant your image is, as well as how vivid it is.</p>' +
-        '<p>The scenarios will automatically move on after a few seconds. The scenarios will be presented over two slides. After the second slide, you will rate the pleasantness of the image and describe the outcome of the imagined scenario. After filling it out, the next scenario will appear on the screen in the same format.</p>' +
+        '<br>' +
+        '<p>In this task, you will be presented with short scenarios. Form a mental image of each scenario. Imagine each scenario happening to you personally. Follow the first image that comes to mind and do not think too much about each one. Then you will rate the pleasantness of the image and describe the outcome of the imagined scenario rate in one short sentence.</p>' +
+        '<br>' +
         '<p>To familiarise yourself with the procedure, you\'ll first go through a short practice phase.</p>' +
+        '<br>' +
         '<p style="text-align: center; margin-top: 40px; font-weight: bold;">Press the spacebar to start the practice phase.</p>' +
         '</div>',
       choices: [" "]
     };
 
-    // Create practice phase trials
-    var practiceTrials = [];
-    
-    practiceScenarios.forEach(function(scenario, index) {
-      // Single slide (manual advance)
-      practiceTrials.push({
-        type: "html-button-response",
-        stimulus: '<div class="scenario-text">' + scenario + '</div>',
-        choices: ['Next']
-      });
-      
-      // Rating and description page
-      practiceTrials.push({
-        type: "html-button-response",
-        stimulus: function() {
-          var ratingScale = '';
-          for (var i = 1; i <= 9; i++) {
-            var labelText = i.toString();
-            if (i === 1) labelText += '<br>Extremely<br>Unpleasant';
-            if (i === 9) labelText += '<br>Extremely<br>Pleasant';
-            
-            ratingScale += '<div class="rating-item">' +
-              '<input type="radio" id="practice-rating-' + i + '" name="practice-pleasantness" value="' + i + '">' +
-              '<label for="practice-rating-' + i + '">' + labelText + '</label>' +
-              '</div>';
-          }
+    // Practice scenario display trial
+    var practice_scenario_display = {
+      type: "html-button-response",
+      stimulus: function() {
+        return '<div class="scenario-text">' + jsPsych.timelineVariable('scenario_text') + '</div>';
+      },
+      choices: ['Next'],
+      data: {
+        task: 'ast_scenario_display',
+        phase: jsPsych.timelineVariable('phase'),
+        scenario_index: jsPsych.timelineVariable('scenario_index')
+      }
+    };
+
+    // Practice rating and description trial
+    var practice_rating_trial = {
+      type: "html-button-response",
+      stimulus: function() {
+        var ratingScale = '';
+        for (var i = 1; i <= 9; i++) {
+          var labelText = i.toString();
+          if (i === 1) labelText += '<br>Extremely<br>Unpleasant';
+          if (i === 9) labelText += '<br>Extremely<br>Pleasant';
           
-          return '<div class="rating-container">' +
-            '<h3>Scenario ' + (index + 1) + ' of ' + practiceScenarios.length + '</h3>' +
-            '<p><strong>How pleasant was your mental image of this scenario?</strong></p>' +
-            '<div class="rating-scale">' + ratingScale + '</div>' +
-            '<p style="margin-top: 30px;"><strong>Please describe the outcome you imagined:</strong></p>' +
-            '<textarea class="description-input" id="practice-outcome-description" placeholder="Describe what you imagined happening..."></textarea>' +
+          ratingScale += '<div class="rating-item">' +
+            '<input type="radio" id="practice-rating-' + i + '" name="practice-pleasantness" value="' + i + '">' +
+            '<label for="practice-rating-' + i + '">' + labelText + '</label>' +
             '</div>';
-        },
-        choices: ['Continue'],
-        on_load: function() {
-          // Variables to store form values
-          var currentRating = null;
-          var currentDescription = '';
-          
-          // Disable continue button until both rating selected AND text entered
-          var continueBtn = document.querySelector('button');
-          continueBtn.disabled = true;
-          continueBtn.classList.add('submit-btn');
-          
-          // Function to check if both conditions are met
-          function checkFormCompletion() {
-            var rating = document.querySelector('input[name="practice-pleasantness"]:checked');
-            var description = document.getElementById('practice-outcome-description').value.trim();
-            
-            continueBtn.disabled = !(rating && description.length > 0);
-          }
-          
-          // Check form completion when rating changes
-          var radioButtons = document.querySelectorAll('input[name="practice-pleasantness"]');
-          radioButtons.forEach(function(radio) {
-            radio.addEventListener('change', checkFormCompletion);
-          });
-          
-          // Check form completion when text input changes
-          var textArea = document.getElementById('practice-outcome-description');
-          textArea.addEventListener('input', checkFormCompletion);
-          
-          // Store values when button is clicked
-          continueBtn.addEventListener('click', function() {
-            var rating = document.querySelector('input[name="practice-pleasantness"]:checked');
-            var description = document.getElementById('practice-outcome-description').value;
-            
-            currentRating = rating ? parseInt(rating.value) : null;
-            currentDescription = description;
-            
-            // Store in global scope for on_finish
-            window.currentPracticeRating = currentRating;
-            window.currentPracticeDescription = currentDescription;
-          });
-        },
-        on_finish: function(data) {
-          practiceRatings.push(window.currentPracticeRating);
-          practiceDescriptions.push(window.currentPracticeDescription || '');
-          practiceResponseTimes.push(data.rt);
         }
-      });
-    });
+        
+        var scenarioIndex = jsPsych.timelineVariable('scenario_index');
+        var totalScenarios = jsPsych.timelineVariable('total_scenarios');
+        
+        return '<div class="rating-container">' +
+          '<h3>Scenario ' + (scenarioIndex + 1) + ' of ' + totalScenarios + '</h3>' +
+          '<p><strong>How pleasant was your mental image of this scenario?</strong></p>' +
+          '<div class="rating-scale">' + ratingScale + '</div>' +
+          '<p style="margin-top: 30px;"><strong>Please describe the outcome you imagined:</strong></p>' +
+          '<textarea class="description-input" id="practice-outcome-description" placeholder="Describe what you imagined happening..."></textarea>' +
+          '</div>';
+      },
+      choices: ['Continue'],
+      data: {
+        task: 'ast_rating',
+        phase: jsPsych.timelineVariable('phase'),
+        scenario_index: jsPsych.timelineVariable('scenario_index'),
+        scenario_text: jsPsych.timelineVariable('scenario_text')
+      },
+      on_load: function() {
+        var continueBtn = document.querySelector('button');
+        continueBtn.disabled = true;
+        continueBtn.classList.add('submit-btn');
+        
+        function checkFormCompletion() {
+          var rating = document.querySelector('input[name="practice-pleasantness"]:checked');
+          var description = document.getElementById('practice-outcome-description').value.trim();
+          continueBtn.disabled = !(rating && description.length > 0);
+        }
+        
+        var radioButtons = document.querySelectorAll('input[name="practice-pleasantness"]');
+        radioButtons.forEach(function(radio) {
+          radio.addEventListener('change', checkFormCompletion);
+        });
+        
+        var textArea = document.getElementById('practice-outcome-description');
+        textArea.addEventListener('input', checkFormCompletion);
+      },
+      on_finish: function(data) {
+        var rating = document.querySelector('input[name="practice-pleasantness"]:checked');
+        var descriptionElement = document.getElementById('practice-outcome-description');
+        var description = descriptionElement ? descriptionElement.value : '';
+        
+        data.pleasantness_rating = rating ? parseInt(rating.value) : null;
+        data.outcome_description = description || '';
+      }
+    };
+
+    // Practice procedure combining both trials
+    var practice_procedure = {
+      timeline: [practice_scenario_display, practice_rating_trial],
+      timeline_variables: practice_stimuli
+    };
 
     // Main task instructions
     var mainInstructions = {
@@ -339,103 +341,118 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Main Experiment Phase</h2>' +
         '<br>' +
         '<p>That was the practice phase. If anything is unclear, feel free to call the experimenter and ask questions.</p>' +
+        '<br>' +
         '<p>Once everything is clear, you can begin the main experiment phase. Your task remains exactly the same as in the practice phase:</p>' +
         '<ol>' +
           '<li>Read the scenarios carefully and imagine yourself in the situation.</li>' +
           '<li>Avoid overthinking the scenario and rate the pleasantness, and describe the outcome based on the first thought that comes to mind</li>' +
         '</ol>' +
+        '<br>' +
         '<p><strong>Remember:</strong> Form a mental image of each scenario. Imagine each scenario happening to you personally.</p>' +
+        '<br>' +
         '<p style="text-align: center; margin-top: 40px; font-weight: bold;">Press the space bar to start the main experiment phase!</p>' +
         '</div>',
       choices: [" "]
     };
 
-    // Create main task trials
-    var mainTrials = [];
-    
-    mainScenarios.forEach(function(scenario, index) {
-      // Single slide (manual advance)
-      mainTrials.push({
-        type: "html-button-response",
-        stimulus: '<div class="scenario-text">' + scenario.text + '</div>',
-        choices: ['Next']
-      });
-      
-      // Rating and description page
-      mainTrials.push({
-        type: "html-button-response",
-        stimulus: function() {
-          var ratingScale = '';
-          for (var i = 1; i <= 9; i++) {
-            var labelText = i.toString();
-            if (i === 1) labelText += '<br>Extremely<br>Unpleasant';
-            if (i === 9) labelText += '<br>Extremely<br>Pleasant';
-            
-            ratingScale += '<div class="rating-item">' +
-              '<input type="radio" id="main-rating-' + i + '" name="main-pleasantness" value="' + i + '">' +
-              '<label for="main-rating-' + i + '">' + labelText + '</label>' +
-              '</div>';
-          }
-          
-          return '<div class="rating-container">' +
-            '<h3>Scenario ' + (index + 1) + ' of ' + mainScenarios.length + '</h3>' +
-            '<p><strong>How pleasant was your mental image of this scenario?</strong></p>' +
-            '<div class="rating-scale">' + ratingScale + '</div>' +
-            '<p style="margin-top: 30px;"><strong>Please describe the outcome you imagined:</strong></p>' +
-            '<textarea class="description-input" id="main-outcome-description" placeholder="Describe what you imagined happening..."></textarea>' +
-            '</div>';
-        },
-        choices: ['Continue'],
-        on_load: function() {
-          // Variables to store form values
-          var currentRating = null;
-          var currentDescription = '';
-          
-          // Disable continue button until both rating selected AND text entered
-          var continueBtn = document.querySelector('button');
-          continueBtn.disabled = true;
-          continueBtn.classList.add('submit-btn');
-          
-          // Function to check if both conditions are met
-          function checkFormCompletion() {
-            var rating = document.querySelector('input[name="main-pleasantness"]:checked');
-            var description = document.getElementById('main-outcome-description').value.trim();
-            
-            continueBtn.disabled = !(rating && description.length > 0);
-          }
-          
-          // Check form completion when rating changes
-          var radioButtons = document.querySelectorAll('input[name="main-pleasantness"]');
-          radioButtons.forEach(function(radio) {
-            radio.addEventListener('change', checkFormCompletion);
-          });
-          
-          // Check form completion when text input changes
-          var textArea = document.getElementById('main-outcome-description');
-          textArea.addEventListener('input', checkFormCompletion);
-          
-          // Store values when button is clicked
-          continueBtn.addEventListener('click', function() {
-            var rating = document.querySelector('input[name="main-pleasantness"]:checked');
-            var description = document.getElementById('main-outcome-description').value;
-            
-            currentRating = rating ? parseInt(rating.value) : null;
-            currentDescription = description;
-            
-            // Store in global scope for on_finish
-            window.currentMainRating = currentRating;
-            window.currentMainDescription = currentDescription;
-          });
-        },
-        on_finish: function(data) {
-          mainRatings.push(window.currentMainRating);
-          mainDescriptions.push(window.currentMainDescription || '');
-          mainResponseTimes.push(data.rt);
-          mainScenarioIds.push(index);
-          mainThemes.push(scenario.theme + '_' + scenario.type);
-        }
-      });
+    // Convert main scenarios to timeline variables format
+    var main_stimuli = mainScenarios.map(function(scenario, index) {
+      return {
+        scenario_text: scenario.text,
+        scenario_index: index,
+        theme: scenario.theme,
+        type: scenario.type,
+        phase: 'main',
+        total_scenarios: mainScenarios.length
+      };
     });
+
+    // Main scenario display trial
+    var main_scenario_display = {
+      type: "html-button-response",
+      stimulus: function() {
+        return '<div class="scenario-text">' + jsPsych.timelineVariable('scenario_text') + '</div>';
+      },
+      choices: ['Next'],
+      data: {
+        task: 'ast_scenario_display',
+        phase: jsPsych.timelineVariable('phase'),
+        scenario_index: jsPsych.timelineVariable('scenario_index'),
+        theme: jsPsych.timelineVariable('theme'),
+        type: jsPsych.timelineVariable('type')
+      }
+    };
+
+    // Main rating and description trial
+    var main_rating_trial = {
+      type: "html-button-response",
+      stimulus: function() {
+        var ratingScale = '';
+        for (var i = 1; i <= 9; i++) {
+          var labelText = i.toString();
+          if (i === 1) labelText += '<br>Extremely<br>Unpleasant';
+          if (i === 9) labelText += '<br>Extremely<br>Pleasant';
+          
+          ratingScale += '<div class="rating-item">' +
+            '<input type="radio" id="main-rating-' + i + '" name="main-pleasantness" value="' + i + '">' +
+            '<label for="main-rating-' + i + '">' + labelText + '</label>' +
+            '</div>';
+        }
+        
+        var scenarioIndex = jsPsych.timelineVariable('scenario_index');
+        var totalScenarios = jsPsych.timelineVariable('total_scenarios');
+        
+        return '<div class="rating-container">' +
+          '<h3>Scenario ' + (scenarioIndex + 1) + ' of ' + totalScenarios + '</h3>' +
+          '<p><strong>How pleasant was your mental image of this scenario?</strong></p>' +
+          '<div class="rating-scale">' + ratingScale + '</div>' +
+          '<p style="margin-top: 30px;"><strong>Please describe the outcome you imagined:</strong></p>' +
+          '<textarea class="description-input" id="main-outcome-description" placeholder="Describe what you imagined happening..."></textarea>' +
+          '</div>';
+      },
+      choices: ['Continue'],
+      data: {
+        task: 'ast_rating',
+        phase: jsPsych.timelineVariable('phase'),
+        scenario_index: jsPsych.timelineVariable('scenario_index'),
+        scenario_text: jsPsych.timelineVariable('scenario_text'),
+        theme: jsPsych.timelineVariable('theme'),
+        type: jsPsych.timelineVariable('type')
+      },
+      on_load: function() {
+        var continueBtn = document.querySelector('button');
+        continueBtn.disabled = true;
+        continueBtn.classList.add('submit-btn');
+        
+        function checkFormCompletion() {
+          var rating = document.querySelector('input[name="main-pleasantness"]:checked');
+          var description = document.getElementById('main-outcome-description').value.trim();
+          continueBtn.disabled = !(rating && description.length > 0);
+        }
+        
+        var radioButtons = document.querySelectorAll('input[name="main-pleasantness"]');
+        radioButtons.forEach(function(radio) {
+          radio.addEventListener('change', checkFormCompletion);
+        });
+        
+        var textArea = document.getElementById('main-outcome-description');
+        textArea.addEventListener('input', checkFormCompletion);
+      },
+      on_finish: function(data) {
+        var rating = document.querySelector('input[name="main-pleasantness"]:checked');
+        var descriptionElement = document.getElementById('main-outcome-description');
+        var description = descriptionElement ? descriptionElement.value : '';
+        
+        data.pleasantness_rating = rating ? parseInt(rating.value) : null;
+        data.outcome_description = description || '';
+      }
+    };
+
+    // Main procedure combining both trials
+    var main_procedure = {
+      timeline: [main_scenario_display, main_rating_trial],
+      timeline_variables: main_stimuli
+    };
 
     // Task complete screen
     var taskComplete = {
@@ -448,23 +465,56 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '</div>',
       choices: [" "],
       on_finish: function() {
-        // Save all data to Qualtrics embedded data
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_pleasantness_ratings", practiceRatings.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_outcome_descriptions", practiceDescriptions.join('|'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_response_times", practiceResponseTimes.join(';'));
+        // Extract all AST data from jsPsych data store
+        var all_trials = jsPsych.data.get().filter({task: 'ast_rating'});
+        var practice_trials = all_trials.filter({phase: 'practice'});
+        var main_trials = all_trials.filter({phase: 'main'});
         
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_pleasantness_ratings", mainRatings.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_outcome_descriptions", mainDescriptions.join('|'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_response_times", mainResponseTimes.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_scenario_ids", mainScenarioIds.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_scenario_themes", mainThemes.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("list_assignment", "2");
-        Qualtrics.SurveyEngine.setJSEmbeddedData("total_scenarios_completed", mainRatings.filter(r => r !== null).length.toString());
+        // Extract practice data arrays
+        var practice_ratings = [];
+        var practice_descriptions = [];
+        var practice_response_times = [];
+        
+        practice_trials.values().forEach(function(trial) {
+          practice_ratings.push(trial.pleasantness_rating);
+          practice_descriptions.push(trial.outcome_description || '');
+          practice_response_times.push(trial.rt);
+        });
+        
+        // Extract main data arrays
+        var main_ratings = [];
+        var main_descriptions = [];
+        var main_response_times = [];
+        var main_scenario_ids = [];
+        var main_themes = [];
+        
+        main_trials.values().forEach(function(trial) {
+          main_ratings.push(trial.pleasantness_rating);
+          main_descriptions.push(trial.outcome_description || '');
+          main_response_times.push(trial.rt);
+          main_scenario_ids.push(trial.scenario_index);
+          main_themes.push(trial.theme + '_' + trial.type);
+        });
+        
+        // Save all data to Qualtrics embedded data using correct API
+        Qualtrics.SurveyEngine.setEmbeddedData("ast2_participant_id", ppt);
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_pleasantness_ratings", practice_ratings.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_outcome_descriptions", practice_descriptions.join('|'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_response_times", practice_response_times.join(';'));
+        
+        Qualtrics.SurveyEngine.setEmbeddedData("main_pleasantness_ratings", main_ratings.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_outcome_descriptions", main_descriptions.join('|'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_response_times", main_response_times.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_scenario_ids", main_scenario_ids.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_scenario_themes", main_themes.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("list_assignment", "2");
+        Qualtrics.SurveyEngine.setEmbeddedData("total_scenarios_completed", main_ratings.filter(r => r !== null).length.toString());
         
         console.log("AST2 Data Export Summary:");
-        console.log("Practice scenarios completed:", practiceRatings.filter(r => r !== null).length);
-        console.log("Main scenarios completed:", mainRatings.filter(r => r !== null).length);
+        console.log("Practice scenarios completed:", practice_trials.count());
+        console.log("Main scenarios completed:", main_trials.count());
         console.log("List assignment:", "2");
+        console.log("Participant ID:", ppt);
 
         // End the jsPsych experiment
         jsPsych.endExperiment();
@@ -481,9 +531,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
     // Create timeline
     var timeline = [
       initialInstructions,
-      ...practiceTrials,
+      practice_procedure,
       mainInstructions,
-      ...mainTrials,
+      main_procedure,
       taskComplete
     ];
 

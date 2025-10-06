@@ -231,9 +231,11 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Ambiguous Scenarios Task</h2>' +
         '<br>' +
         '<p><strong>Instructions:</strong></p>' +
-        '<p>In this task, you will be presented with short scenarios. Form a mental image of each scenario. Imagine each scenario happening to you personally. Follow the first image that comes to mind and do not think too much about each one. Then rate how pleasant your image is, as well as how vivid it is.</p>' +
-        '<p>The scenarios will automatically move on after a few seconds. The scenarios will be presented over two slides. After the second slide, you will rate the pleasantness of the image and describe the outcome of the imagined scenario. After filling it out, the next scenario will appear on the screen in the same format.</p>' +
+        '<br>' +
+        '<p>In this task, you will be presented with short scenarios. Form a mental image of each scenario. Imagine each scenario happening to you personally. Follow the first image that comes to mind and do not think too much about each one. Then you will rate the pleasantness of the image and describe the outcome of the imagined scenario rate in one short sentence.</p>' +
+        '<br>' +
         '<p>To familiarise yourself with the procedure, you\'ll first go through a short practice phase.</p>' +
+        '<br>' +
         '<p style="text-align: center; margin-top: 40px; font-weight: bold;">Press the spacebar to start the practice phase.</p>' +
         '</div>',
       choices: [" "]
@@ -318,7 +320,8 @@ Qualtrics.SurveyEngine.addOnload(function () {
       },
       on_finish: function(data) {
         var rating = document.querySelector('input[name="practice-pleasantness"]:checked');
-        var description = document.getElementById('practice-outcome-description').value;
+        var descriptionElement = document.getElementById('practice-outcome-description');
+        var description = descriptionElement ? descriptionElement.value : '';
         
         data.pleasantness_rating = rating ? parseInt(rating.value) : null;
         data.outcome_description = description || '';
@@ -338,12 +341,15 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Main Experiment Phase</h2>' +
         '<br>' +
         '<p>That was the practice phase. If anything is unclear, feel free to call the experimenter and ask questions.</p>' +
+        '<br>' +
         '<p>Once everything is clear, you can begin the main experiment phase. Your task remains exactly the same as in the practice phase:</p>' +
         '<ol>' +
           '<li>Read the scenarios carefully and imagine yourself in the situation.</li>' +
           '<li>Avoid overthinking the scenario and rate the pleasantness, and describe the outcome based on the first thought that comes to mind</li>' +
         '</ol>' +
+        '<br>' +
         '<p><strong>Remember:</strong> Form a mental image of each scenario. Imagine each scenario happening to you personally.</p>' +
+        '<br>' +
         '<p style="text-align: center; margin-top: 40px; font-weight: bold;">Press the space bar to start the main experiment phase!</p>' +
         '</div>',
       choices: [" "]
@@ -434,7 +440,8 @@ Qualtrics.SurveyEngine.addOnload(function () {
       },
       on_finish: function(data) {
         var rating = document.querySelector('input[name="main-pleasantness"]:checked');
-        var description = document.getElementById('main-outcome-description').value;
+        var descriptionElement = document.getElementById('main-outcome-description');
+        var description = descriptionElement ? descriptionElement.value : '';
         
         data.pleasantness_rating = rating ? parseInt(rating.value) : null;
         data.outcome_description = description || '';
