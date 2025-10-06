@@ -306,12 +306,6 @@ Qualtrics.SurveyEngine.addOnload(function () {
         negative_category: "GA"
       },
       { 
-        words: ["I", "usually", "enjoy", "endure", "social", "engagements"], 
-        positive_word: "enjoy", 
-        negative_word: "endure",
-        negative_category: "GA"
-      },
-      { 
         words: ["I", "usually", "attend", "avoid", "social", "events"], 
         positive_word: "attend", 
         negative_word: "avoid",

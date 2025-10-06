@@ -182,6 +182,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
     }
 
     // Generate random 6-digit cognitive load number
+    // Get participant ID from Qualtrics
+    var ppt = "${e://Field/PROLIFIC_PID}" || "SST2_" + Math.random().toString(36).substr(2, 9);
+    
     var cognitiveLoadDigits = Math.floor(100000 + Math.random() * 900000).toString();
     console.log("Generated cognitive load number:", cognitiveLoadDigits);
 
@@ -309,6 +312,12 @@ Qualtrics.SurveyEngine.addOnload(function () {
         words: ["Other", "people", "approve", "disapprove", "of", "me"], 
         positive_word: "approve", 
         negative_word: "disapprove",
+        negative_category: "GA"
+      },
+      { 
+        words: ["I", "usually", "enjoy", "endure", "social", "engagements"], 
+        positive_word: "enjoy", 
+        negative_word: "endure",
         negative_category: "GA"
       }
     ];
@@ -858,10 +867,11 @@ Qualtrics.SurveyEngine.addOnload(function () {
       // Adding the clean up and continue functions
       on_finish: function (data) {
 
-        // Extract cognitive load data
-        Qualtrics.SurveyEngine.setJSEmbeddedData("cognitive_load_digits", cognitiveLoadDigits);
-        Qualtrics.SurveyEngine.setJSEmbeddedData("cognitive_load_recall", cognitiveLoadRecall);
-        Qualtrics.SurveyEngine.setJSEmbeddedData("cognitive_load_accuracy", cognitiveLoadAccuracy);
+        // Save all data to Qualtrics embedded data using correct API
+        Qualtrics.SurveyEngine.setEmbeddedData("sst2_participant_id", ppt);
+        Qualtrics.SurveyEngine.setEmbeddedData("cognitive_load_digits", cognitiveLoadDigits);
+        Qualtrics.SurveyEngine.setEmbeddedData("cognitive_load_recall", cognitiveLoadRecall);
+        Qualtrics.SurveyEngine.setEmbeddedData("cognitive_load_accuracy", cognitiveLoadAccuracy);
 
         // Get sentence completion data for practice and main trials
         var practice_trials = jsPsych.data.get().filter({ 
@@ -888,25 +898,29 @@ Qualtrics.SurveyEngine.addOnload(function () {
         var main_total = main_trials.count();
 
         // Export Practice data to Qualtrics
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_sentence_completions", practice_word_orders.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_sentences", practice_sentences.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_sentence_interpretations", practice_interpretations.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_completion_times", practice_times.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_total_completed", practice_total);
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_sentence_completions", practice_word_orders.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_sentences", practice_sentences.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_sentence_interpretations", practice_interpretations.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_completion_times", practice_times.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_total_completed", practice_total);
 
         // Export Main Trials data to Qualtrics
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_sentence_completions", main_word_orders.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_sentences", main_sentences.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_sentence_interpretations", main_interpretations.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_completion_times", main_times.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_total_completed", main_total);
+        Qualtrics.SurveyEngine.setEmbeddedData("main_sentence_completions", main_word_orders.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_sentences", main_sentences.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_sentence_interpretations", main_interpretations.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_completion_times", main_times.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_total_completed", main_total);
+        Qualtrics.SurveyEngine.setEmbeddedData("list_assignment", "2");
 
         console.log("Scrambled Sentence Task Data Export Summary:");
         console.log("Cognitive Load Digits:", cognitiveLoadDigits);
         console.log("Cognitive Load Recall:", cognitiveLoadRecall);
         console.log("Cognitive Load Accuracy:", cognitiveLoadAccuracy);
+        console.log("SST2 Data Export Summary:");
         console.log("Practice Completed:", practice_total);
         console.log("Main Trials Completed:", main_total);
+        console.log("List assignment:", "2");
+        console.log("Participant ID:", ppt);
 
         // Clear the stage
         jQuery('#display_stage').remove();
