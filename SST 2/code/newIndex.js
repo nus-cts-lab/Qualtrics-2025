@@ -459,11 +459,25 @@ Qualtrics.SurveyEngine.addOnload(function () {
             document.querySelector('button').click();
           }
         });
+        
+        // Capture data when button is clicked (before DOM is cleared)
+        var submitBtn = document.querySelector('button');
+        submitBtn.addEventListener('click', function() {
+          var recallValue = document.getElementById('recall-input').value;
+          
+          // Store data in global scope for on_finish to access
+          window.currentCognitiveLoadRecall = recallValue || '';
+          
+          console.log("Button click - Cognitive load recall captured:", window.currentCognitiveLoadRecall);
+        });
       },
       on_finish: function(data) {
-        // Get the recalled number
-        cognitiveLoadRecall = document.getElementById('recall-input').value;
+        // Use captured data from button click
+        cognitiveLoadRecall = window.currentCognitiveLoadRecall || '';
         cognitiveLoadAccuracy = (cognitiveLoadRecall === cognitiveLoadDigits) ? 1 : 0;
+        
+        console.log("SST2 on_finish - Final recall value:", cognitiveLoadRecall);
+        console.log("SST2 on_finish - Accuracy:", cognitiveLoadAccuracy);
         
         // Store in trial data
         data.cognitive_load_recall = cognitiveLoadRecall;
