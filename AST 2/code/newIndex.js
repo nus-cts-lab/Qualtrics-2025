@@ -317,14 +317,27 @@ Qualtrics.SurveyEngine.addOnload(function () {
         
         var textArea = document.getElementById('practice-outcome-description');
         textArea.addEventListener('input', checkFormCompletion);
+        
+        // Capture data when button is clicked (before DOM is cleared)
+        continueBtn.addEventListener('click', function() {
+          var rating = document.querySelector('input[name="practice-pleasantness"]:checked');
+          var description = document.getElementById('practice-outcome-description').value;
+          
+          // Store data in global scope for on_finish to access
+          window.currentPracticeRating = rating ? parseInt(rating.value) : null;
+          window.currentPracticeDescription = description || '';
+          
+          console.log("Button click - Practice rating captured:", window.currentPracticeRating);
+          console.log("Button click - Practice description captured:", window.currentPracticeDescription);
+        });
       },
       on_finish: function(data) {
-        var rating = document.querySelector('input[name="practice-pleasantness"]:checked');
-        var descriptionElement = document.getElementById('practice-outcome-description');
-        var description = descriptionElement ? descriptionElement.value : '';
+        // Use captured data from button click
+        data.pleasantness_rating = window.currentPracticeRating || null;
+        data.outcome_description = window.currentPracticeDescription || '';
         
-        data.pleasantness_rating = rating ? parseInt(rating.value) : null;
-        data.outcome_description = description || '';
+        console.log("Practice on_finish - Final rating:", data.pleasantness_rating);
+        console.log("Practice on_finish - Final description:", data.outcome_description);
       }
     };
 
@@ -437,14 +450,27 @@ Qualtrics.SurveyEngine.addOnload(function () {
         
         var textArea = document.getElementById('main-outcome-description');
         textArea.addEventListener('input', checkFormCompletion);
+        
+        // Capture data when button is clicked (before DOM is cleared)
+        continueBtn.addEventListener('click', function() {
+          var rating = document.querySelector('input[name="main-pleasantness"]:checked');
+          var description = document.getElementById('main-outcome-description').value;
+          
+          // Store data in global scope for on_finish to access
+          window.currentMainRating = rating ? parseInt(rating.value) : null;
+          window.currentMainDescription = description || '';
+          
+          console.log("Button click - Main rating captured:", window.currentMainRating);
+          console.log("Button click - Main description captured:", window.currentMainDescription);
+        });
       },
       on_finish: function(data) {
-        var rating = document.querySelector('input[name="main-pleasantness"]:checked');
-        var descriptionElement = document.getElementById('main-outcome-description');
-        var description = descriptionElement ? descriptionElement.value : '';
+        // Use captured data from button click
+        data.pleasantness_rating = window.currentMainRating || null;
+        data.outcome_description = window.currentMainDescription || '';
         
-        data.pleasantness_rating = rating ? parseInt(rating.value) : null;
-        data.outcome_description = description || '';
+        console.log("Main on_finish - Final rating:", data.pleasantness_rating);
+        console.log("Main on_finish - Final description:", data.outcome_description);
       }
     };
 
