@@ -156,6 +156,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
   function initExp() {
 
+    // Get participant ID from Qualtrics
+    var ppt = "${e://Field/PROLIFIC_PID}" || "PST2_" + Math.random().toString(36).substr(2, 9);
+
     // Practice scenarios (Practice 2)
     var practiceScenarios = [
       {
@@ -502,10 +505,15 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Probes Scenario Task</h2>' +
         '<br>' +
         '<p><strong>Instructions:</strong></p>' +
-        '<p>In the following task, you will be asked to read short stories/scenarios. While reading, try to imagine yourself as best you can in the described situation. The scenarios automatically appear on the screen sentence by sentence. In the last sentence, you will notice that one word has been omitted. This word appears at the end, but only as a fragment.</p>' +
-        '<p>For example, the last word could be "un_ver_iteit" for "university." Your task is to use the content of the scenario to determine the missing word. If you know the correct answer, press the spacebar as quickly as possible.</p>' +
+        '<br>' +
+        '<p>In the following task, you will be asked to read short stories/scenarios. While reading, try to imagine yourself as best you can in the described situation. The scenarios automatically appear on the screen sentence by sentence. In the last sentence, you will notice that the final word word is presented only as a fragment.</p>' +
+        '<br>' +
+        '<p>For example, the last word could be "un_ver_iteit" for "university." Your task is to use the content of the scenario to determine the fragmented word. If you know the correct answer, press the spacebar as quickly as possible. This reaction time will be recorded.</p>' +
+        '<br>' +
         '<p>You will then be asked to type the missing word in its entirety. Do this and click NEXT to continue.</p>' +
+        '<br>' +
         '<p>Finally, there will be a yes/no question about the content of the scenario. Once you\'ve answered this by clicking the correct box, the following scenario (sentence by sentence) will appear on the screen.</p>' +
+        '<br>' +
         '<p>To familiarise yourself with the procedure, you\'ll first go through a short practice phase.</p>' +
         '<p style="text-align: center; margin-top: 40px; font-weight: bold;">Press the spacebar to start the practice phase.</p>' +
         '</div>',
@@ -527,24 +535,26 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Main Experiment Phase</h2>' +
         '<br>' +
         '<p>That was the practice phase. If anything is unclear, feel free to call the experimenter and ask questions.</p>' +
+        '<br>' +
         '<p>Once everything is clear, you can begin the main experiment phase. Your task remains exactly the same as in the practice phase:</p>' +
-        '<ol>' +
-          '<li>Read the scenarios carefully and imagine yourself in the situation.</li>' +
-          '<li>Try to decipher the missing word as quickly as possible and press the space bar as quickly as possible when you know it.</li>' +
-          '<li>Fill in the missing word (completely) and click NEXT with the mouse.</li>' +
-          '<li>Answer the content question with the mouse.</li>' +
-        '</ol>' +
+        '<br>' +
+        '<p>Read the scenarios carefully and imagine yourself in the situation.</p>' +
+        '<p>Try to decipher the missing word as quickly as possible and press the space bar as quickly as possible when you know it. This reaction time will be recorded.</p>' +
+        '<p>Fill in the missing word (completely) and click NEXT with the mouse.</p>' +
+        '<p>Answer the content question with the mouse.</p>' +
+        '<br>' +
         '<p><strong>Remember:</strong> It\'s important to imagine yourself in every situation you read, even if it couldn\'t happen to you. Understanding how you might feel in that situation will help you answer the questions.</p>' +
         '<p style="text-align: center; margin-top: 40px; font-weight: bold;">Press the space bar to start the main experiment phase!</p>' +
         '</div>',
       choices: [" "]
     };
 
-    // Create main task trials
+    // Create main task trials with randomization
     var mainTrials = [];
+    var shuffledMainScenarios = jsPsych.randomization.shuffle(mainScenarios);
     
-    mainScenarios.forEach(function(scenario, index) {
-      mainTrials.push(createScenarioSequence(scenario, index + 1, mainScenarios.length, false));
+    shuffledMainScenarios.forEach(function(scenario, index) {
+      mainTrials.push(createScenarioSequence(scenario, index + 1, shuffledMainScenarios.length, false));
     });
 
     // Function to create scenario sequence
@@ -703,7 +713,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
       type: "html-keyboard-response",
       stimulus: '<div class="instructions">' +
         '<h2>Task Complete!</h2>' +
+        '<br>' +
         '<p>Thank you for participating in the Probes Scenario Task.</p>' +
+        '<br>' +
         '<p>Press SPACEBAR to finish.</p>' +
         '</div>',
       choices: [" "],
@@ -721,22 +733,23 @@ Qualtrics.SurveyEngine.addOnload(function () {
         var main_comprehension_accuracy = main_trials.select('final_comprehension_correct').values;
         var main_scenario_types = main_trials.select('scenario_type').values;
         
-        // Save all data to Qualtrics embedded data
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_reaction_times", practice_reaction_times.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_word_accuracy", practice_word_accuracy.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("practice_comprehension_accuracy", practice_comprehension_accuracy.join(';'));
+        // Save all data to Qualtrics embedded data using correct API
+        Qualtrics.SurveyEngine.setEmbeddedData("pst2_participant_id", ppt);
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_reaction_times", practice_reaction_times.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_word_accuracy", practice_word_accuracy.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_comprehension_accuracy", practice_comprehension_accuracy.join(';'));
         
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_reaction_times", main_reaction_times.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_word_accuracy", main_word_accuracy.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_comprehension_accuracy", main_comprehension_accuracy.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("main_scenario_types", main_scenario_types.join(';'));
-        Qualtrics.SurveyEngine.setJSEmbeddedData("list_assignment", "2");
-        Qualtrics.SurveyEngine.setJSEmbeddedData("total_scenarios_completed", main_trials.count());
+        Qualtrics.SurveyEngine.setEmbeddedData("main_reaction_times", main_reaction_times.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_word_accuracy", main_word_accuracy.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_comprehension_accuracy", main_comprehension_accuracy.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_scenario_types", main_scenario_types.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("list_assignment", "2");
         
         console.log("PST2 Data Export Summary:");
         console.log("Practice scenarios completed:", practice_trials.count());
         console.log("Main scenarios completed:", main_trials.count());
         console.log("List assignment:", "2");
+        console.log("Participant ID:", ppt);
 
         // End the jsPsych experiment
         jsPsych.endExperiment();
