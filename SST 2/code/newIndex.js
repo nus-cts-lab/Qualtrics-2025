@@ -303,12 +303,6 @@ Qualtrics.SurveyEngine.addOnload(function () {
         negative_category: "GA"
       },
       { 
-        words: ["My", "laugh", "sounds", "so", "happy", "ridiculous"], 
-        positive_word: "happy", 
-        negative_word: "ridiculous",
-        negative_category: "GA"
-      },
-      { 
         words: ["Other", "people", "approve", "disapprove", "of", "me"], 
         positive_word: "approve", 
         negative_word: "disapprove",

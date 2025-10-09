@@ -159,12 +159,12 @@ Qualtrics.SurveyEngine.addOnload(function () {
         type: "Depression"
       },
       {
-        text: "The probation period at your new job is almost over. You get invited to your boss and receive feedback on how you have done so far.",
+        text: "Your best friend convinces you to go on a blind date and as you sit in the bar waiting to meet your date, you think about how it will go.",
         theme: "Future",
         type: "Depression"
       },
       {
-        text: "You are going to see your sister in her school play. You have left it to the last minute to get there. As you drive up to the school and see the carpark, you anticipate how long it will take for you to arrive.",
+        text: "You are starting a new job that you very much want. You think about what it will be like.",
         theme: "Future",
         type: "Depression"
       },
@@ -185,7 +185,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         type: "Anxiety"
       },
       {
-        text: "After a long day of work, your partner comes home and says, \"We need to talk\".",
+        text: "After a long day of work, your partner comes home and says, \"Can we talk?\".",
         theme: "Uncertainty",
         type: "Anxiety"
       },
@@ -205,7 +205,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         type: "Anxiety"
       },
       {
-        text: "Today, your supervisor called you to their office to discuss the change in the quality of your work over the past few weeks.",
+        text: "Today, your supervisor called you to their office to discuss the quality of your work over the past few months.",
         theme: "Worry",
         type: "Anxiety"
       },

@@ -147,37 +147,37 @@ Qualtrics.SurveyEngine.addOnload(function () {
         type: "Depression"
       },
       {
-        text: "You are hosting a dinner party for 10 people and got pretty stressed out while preparing the food. You can tell from the initial reaction of the guests how they like the food.",
+        text: "You are organising the annual office party on a small budget. On the night of the party, you look around to see if people are enjoying themselves.",
         theme: "Self", 
         type: "Depression"
       },
       {
-        text: "You give a speech at your friend's wedding. When you have finished, you observe the audience's reaction.",
+        text: "Some important people are visiting the office and you are asked at the last minute to present a project to them. Afterwards, you get feedback on your performance.",
         theme: "Self",
         type: "Depression"
       },
       {
-        text: "You are in a reflective mood and think back at past achievements and disappointments that you have experienced during your life. Overall, your main feelings about your life so far emerge.",
-        theme: "Future",
-        type: "Depression"
-      },
-      {
-        text: "You go to a place you visited as a child. Walking around makes you feel emotional.",
-        theme: "Future",
-        type: "Depression"
-      },
-      {
-        text: "It is the end of December. You reflect upon the year behind you.",
-        theme: "Future",
-        type: "Depression"
-      },
-      {
         text: "It is an overcast day, and you are sitting on the beach. You look up to notice the weather really beginning to change.",
-        theme: "Experiences",
+        theme: "Future",
         type: "Depression"
       },
       {
         text: "Your friend is very keen on skating and persuades you to try it out. At the rink, you put on the skates and step on the ice. You glide forward, slowly at first, then faster.",
+        theme: "Future",
+        type: "Depression"
+      },
+      {
+        text: "As you walk into the interview room, the panel of interviewers welcomes you and proceeds to ask some tough questions. By the end of the interview, you know what the outcome is.",
+        theme: "Future",
+        type: "Depression"
+      },
+      {
+        text: "It's New Year's Eve. You think about the year ahead of you. You are in a thoughtful mood and think back at past achievements and disappointments that you have experienced during your life. Overall, your main feelings so far emerge.",
+        theme: "Experiences",
+        type: "Depression"
+      },
+      {
+        text: "You go to a place you visited as a child. Walking around makes you feel emotional.",
         theme: "Experiences",
         type: "Depression"
       },
