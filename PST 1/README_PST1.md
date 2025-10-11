@@ -106,7 +106,7 @@ This will be the result of clicking on **"Embedded Data"**.
 
 ![alt text](assets/17.PNG)
 
-Here, what you need to do is to create 9 separate data entries named:
+Here, what you need to do is to create 12 separate data entries named:
 
 - `practice_reaction_times`
 - `practice_word_accuracy`
@@ -116,6 +116,8 @@ Here, what you need to do is to create 9 separate data entries named:
 - `main_comprehension_accuracy`
 - `main_scenario_types`
 - `list_assignment`
+- `practice_scenarios_completed`
+- `main_scenarios_completed`
 - `total_scenarios_completed`
 
 When you do this, Qualtrics will automatically log these data, and it will be accessible through its `.csv` data file export. After you have included all data fields, it should look similar to this:
@@ -147,7 +149,12 @@ The experiment collects the following data:
 - `main_comprehension_accuracy`: Comprehension question accuracy (1 = correct, 0 = incorrect, semicolon separated)
 - `main_scenario_types`: Scenario type categories (positive, depression, anxiety, semicolon separated)
 - `list_assignment`: Which stimulus list was used ("1" for Practice 1 + List 1)
-- `total_scenarios_completed`: Number of main scenarios completed successfully
+
+**Completion Tracking Data:**
+
+- `practice_scenarios_completed`: Number of practice scenarios completed successfully
+- `main_scenarios_completed`: Number of main scenarios completed successfully
+- `total_scenarios_completed`: Total number of scenarios completed (practice + main)
 
 **Scoring:**
 

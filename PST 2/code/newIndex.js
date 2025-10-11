@@ -733,6 +733,11 @@ Qualtrics.SurveyEngine.addOnload(function () {
         var main_comprehension_accuracy = main_trials.select('final_comprehension_correct').values;
         var main_scenario_types = main_trials.select('scenario_type').values;
         
+        // Calculate scenario completion counts
+        var practice_count = practice_trials.count();
+        var main_count = main_trials.count();
+        var total_count = practice_count + main_count;
+        
         // Save all data to Qualtrics embedded data using correct API
         Qualtrics.SurveyEngine.setEmbeddedData("pst2_participant_id", ppt);
         Qualtrics.SurveyEngine.setEmbeddedData("practice_reaction_times", practice_reaction_times.join(';'));
@@ -744,6 +749,11 @@ Qualtrics.SurveyEngine.addOnload(function () {
         Qualtrics.SurveyEngine.setEmbeddedData("main_comprehension_accuracy", main_comprehension_accuracy.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("main_scenario_types", main_scenario_types.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("list_assignment", "2");
+        
+        // Save scenario completion counts
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_scenarios_completed", practice_count);
+        Qualtrics.SurveyEngine.setEmbeddedData("main_scenarios_completed", main_count);
+        Qualtrics.SurveyEngine.setEmbeddedData("total_scenarios_completed", total_count);
         
         console.log("PST2 Data Export Summary:");
         console.log("Practice scenarios completed:", practice_trials.count());

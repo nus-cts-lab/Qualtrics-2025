@@ -106,17 +106,18 @@ This will be the result of clicking on **"Embedded Data"**.
 
 ![alt text](assets/17.PNG)
 
-Here, what you need to do is to create 10 separate data entries named:
+Here, what you need to do is to create 12 separate data entries named:
 
-- `practice_pleasantness_ratings`
-- `practice_outcome_descriptions`
-- `practice_response_times`
-- `main_pleasantness_ratings`
-- `main_outcome_descriptions`
-- `main_response_times`
-- `main_scenario_ids`
-- `main_scenario_themes`
+- `practice_reaction_times`
+- `practice_word_accuracy`
+- `practice_comprehension_accuracy`
+- `main_reaction_times`
+- `main_word_accuracy`
+- `main_comprehension_accuracy`
+- `main_scenario_types`
 - `list_assignment`
+- `practice_scenarios_completed`
+- `main_scenarios_completed`
 - `total_scenarios_completed`
 
 When you do this, Qualtrics will automatically log these data, and it will be accessible through its `.csv` data file export. After you have included all data fields, it should look similar to this:
@@ -149,7 +150,12 @@ The experiment collects the following data:
 - `main_scenario_ids`: Scenario identification numbers (semicolon separated)
 - `main_scenario_themes`: Theme categories (Self_Depression, Future_Depression, Uncertainty_Anxiety, etc., semicolon separated)
 - `list_assignment`: Which stimulus list was used ("1" for List 1, "2" for List 2)
-- `total_scenarios_completed`: Number of main scenarios completed successfully
+
+**Completion Tracking Data:**
+
+- `practice_scenarios_completed`: Number of practice scenarios completed successfully
+- `main_scenarios_completed`: Number of main scenarios completed successfully
+- `total_scenarios_completed`: Total number of scenarios completed (practice + main)
 
 **Rating Scale:**
 
