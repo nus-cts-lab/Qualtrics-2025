@@ -133,10 +133,10 @@ Qualtrics.SurveyEngine.addOnload(function () {
         'margin: 30px 0;' +
       '}' +
       '.feedback.correct {' +
-        'color: #28a745;' +
+        'color: #28a745 !important;' +
       '}' +
       '.feedback.incorrect {' +
-        'color: #dc3545;' +
+        'color: #dc3545 !important;' +
       '}' +
       '.instructions {' +
         'background-color: white;' +
@@ -477,7 +477,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
       },
       {
         sentence1: "You have a friend who is having family problems, and she calls to confide in you. After you share",
-        sentence2: "your opinion, she seems unsure of how to respond. You start thinking about t…",
+        sentence2: "your opinion, she seems unsure of how to respond. You start thinking about…",
         sentence3: "how this might affect your relationship if you said something…",
         fragment: "wr_ng",
         correctWord: "wrong",
@@ -557,6 +557,11 @@ Qualtrics.SurveyEngine.addOnload(function () {
       mainTrials.push(createScenarioSequence(scenario, index + 1, shuffledMainScenarios.length, false));
     });
 
+    // Function to convert fragment to asterisk format for input page
+    function convertToAsteriskFormat(fragment) {
+      return fragment.replace(/[a-zA-Z]/g, '*');
+    }
+
     // Function to create scenario sequence
     function createScenarioSequence(scenario, scenarioNum, totalScenarios, isPractice) {
       var trials = [];
@@ -570,7 +575,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         type: "html-keyboard-response",
         stimulus: '<div class="sentence-line">' + scenario.sentence1 + '</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 2500
+        trial_duration: 3000
       });
       
       // Sentence 2 (2.5 seconds)
@@ -579,7 +584,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         stimulus: '<div class="sentence-line">' + scenario.sentence1 + '</div>' +
                   '<div class="sentence-line">' + scenario.sentence2 + '</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 2500
+        trial_duration: 3000
       });
       
       // Sentence 3 (2.5 seconds)
@@ -589,7 +594,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
                   '<div class="sentence-line">' + scenario.sentence2 + '</div>' +
                   '<div class="sentence-line">' + scenario.sentence3 + '</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 2500
+        trial_duration: 3000
       });
       
       // Word fragment with spacebar reaction time
@@ -618,7 +623,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         stimulus: '<div class="input-container">' +
           '<h3>Scenario ' + scenarioNum + ' of ' + totalScenarios + '</h3>' +
           '<p>Type the complete word:</p>' +
-          '<p><strong>Fragment:</strong> ' + scenario.fragment + '</p>' +
+          '<p><strong>Fragment:</strong> ' + convertToAsteriskFormat(scenario.fragment) + '</p>' +
           '<input type="text" class="word-input" id="word-input" placeholder="Enter the complete word...">' +
           '</div>',
         choices: ['Next'],

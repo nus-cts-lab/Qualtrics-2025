@@ -133,10 +133,10 @@ Qualtrics.SurveyEngine.addOnload(function () {
         'margin: 30px 0;' +
       '}' +
       '.feedback.correct {' +
-        'color: #28a745;' +
+        'color: #28a745 !important;' +
       '}' +
       '.feedback.incorrect {' +
-        'color: #dc3545;' +
+        'color: #dc3545 !important;' +
       '}' +
       '.instructions {' +
         'background-color: white;' +
@@ -180,7 +180,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         correctAnswer: "no"
       },
       {
-        sentence1: "You are reading a novel on the sofa",
+        sentence1: "You are reading a novel on the sofa..",
         sentence2: "late at night. After finishing a chapter…",
         sentence3: "you carefully turn over to the next…",
         fragment: "p_ge",
@@ -305,7 +305,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         type: "depression"
       },
       {
-        sentence1: "You volunteer to organise a fundraising event for a hospital. After spending months",
+        sentence1: "You volunteer to organise a fundraising event for a hospital. After spending months..",
         sentence2: "preparing and coordinating, your efforts seem to go unnoticed.",
         sentence3: "You cannot shake the feeling that your work is…",
         fragment: "unimp_ _tant",
@@ -378,7 +378,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         sentence1: "You have been trying to stick to a new workout routine…",
         sentence2: "for the past few weeks, but you see very little progress.",
         sentence3: "No matter how hard you try, you feel whatever you do will be…",
-        fragment: "f_tle",
+        fragment: "f_tile",
         correctWord: "futile",
         question: "Do you think your exercise routine will help you reach your goal?",
         correctAnswer: "no",
@@ -416,7 +416,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         type: "anxiety"
       },
       {
-        sentence1: "You hear that your company is restructuring and some",
+        sentence1: "You hear that your company is restructuring and some..",
         sentence2: "roles may change. You start imagining the worst,…",
         sentence3: "convinced that you will be completely…",
         fragment: "r_moved",
@@ -557,6 +557,11 @@ Qualtrics.SurveyEngine.addOnload(function () {
       mainTrials.push(createScenarioSequence(scenario, index + 1, shuffledMainScenarios.length, false));
     });
 
+    // Function to convert fragment to asterisk format for input page
+    function convertToAsteriskFormat(fragment) {
+      return fragment.replace(/[a-zA-Z]/g, '*');
+    }
+
     // Function to create scenario sequence
     function createScenarioSequence(scenario, scenarioNum, totalScenarios, isPractice) {
       var trials = [];
@@ -570,7 +575,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         type: "html-keyboard-response",
         stimulus: '<div class="sentence-line">' + scenario.sentence1 + '</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 2500
+        trial_duration: 3000
       });
       
       // Sentence 2 (2.5 seconds)
@@ -579,7 +584,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         stimulus: '<div class="sentence-line">' + scenario.sentence1 + '</div>' +
                   '<div class="sentence-line">' + scenario.sentence2 + '</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 2500
+        trial_duration: 3000
       });
       
       // Sentence 3 (2.5 seconds)
@@ -589,7 +594,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
                   '<div class="sentence-line">' + scenario.sentence2 + '</div>' +
                   '<div class="sentence-line">' + scenario.sentence3 + '</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 2500
+        trial_duration: 3000
       });
       
       // Word fragment with spacebar reaction time
@@ -618,7 +623,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         stimulus: '<div class="input-container">' +
           '<h3>Scenario ' + scenarioNum + ' of ' + totalScenarios + '</h3>' +
           '<p>Type the complete word:</p>' +
-          '<p><strong>Fragment:</strong> ' + scenario.fragment + '</p>' +
+          '<p><strong>Fragment:</strong> ' + convertToAsteriskFormat(scenario.fragment) + '</p>' +
           '<input type="text" class="word-input" id="word-input" placeholder="Enter the complete word...">' +
           '</div>',
         choices: ['Next'],

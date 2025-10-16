@@ -131,8 +131,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
     // Practice scenarios (List 1)
     var practiceScenarios = [
       "You are cooking dinner and taste a spoonful of your soup. The flavour is stronger than you expected.",
-      "You wake up on a weekend morning and notice sunlight streaming through the window. You stretch and take a deep breath, thinking about your day ahead.",
-      "You receive a letter in the post with your name on it. As you open it, you wonder what it contains."
+      "You wake up on a weekend morning and notice sunlight streaming through the window. You stretch and take a deep breath, thinking about your day ahead."
     ];
 
     // Main task scenarios (List 1)
@@ -232,7 +231,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<br>' +
         '<p><strong>Instructions:</strong></p>' +
         '<br>' +
-        '<p>In this task, you will be presented with short scenarios. Form a mental image of each scenario. Imagine each scenario happening to you personally. Follow the first image that comes to mind and do not think too much about each one. Then you will rate the pleasantness of the image and describe the outcome of the imagined scenario rate in one short sentence.</p>' +
+        '<p>In this task, you will be presented with short scenarios. For each scenario, form a mental image and imagine it happening to you personally. Follow the first image that comes to mind and do not think too much about each one. Then you will rate how pleasant the image feels to you and describe the outcome of the imagined scenario in one short sentence. This means explaining how you think the situation would unfold or what might happen next.</p>' +
         '<br>' +
         '<p>To familiarise yourself with the procedure, you\'ll first go through a short practice phase.</p>' +
         '<br>' +
