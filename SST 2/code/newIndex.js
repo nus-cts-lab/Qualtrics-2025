@@ -559,7 +559,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
         return '<div class="sentence-container">' +
           '<div class="progress-info">' +
-            '<div><strong>Main Trials</strong> - Sentence ' + sentenceNumber + ' of 20</div>' +
+            '<div><strong>' + blockNumber + '</strong> - Sentence ' + sentenceNumber + ' of ' + (blockNumber === 'Practice' ? '3' : '20') + '</div>' +
           '</div>' +
           '<h3>Click words in order (1-5) to unscramble the sentence:</h3>' +
           '<div class="word-container">' + wordButtons + '</div>' +
