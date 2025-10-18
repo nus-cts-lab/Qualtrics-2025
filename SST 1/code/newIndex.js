@@ -322,12 +322,6 @@ Qualtrics.SurveyEngine.addOnload(function () {
     // Practice Sentences
     var practice_sentences = [
       { 
-        words: ["I", "visit", "the", "theatre", "cinema", "often"], 
-        positive_word: "theatre", 
-        negative_word: "cinema",
-        negative_category: "P"
-      },
-      { 
         words: ["I", "expect", "to", "see", "snow", "rain"], 
         positive_word: "snow", 
         negative_word: "rain",
@@ -505,14 +499,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
     // Data collection functions
     function constructSentence(words, wordOrder) {
-      var orderedWords = [];
-      for (var i = 1; i <= 5; i++) {
-        var position = wordOrder.indexOf(i);
-        if (position !== -1) {
-          orderedWords.push(words[position]);
-        }
-      }
-      return orderedWords.join(' ');
+      return wordOrder.map(i => words[i - 1]).join(' ');
     }
 
     function classifySentence(sentence, sentenceData) {
@@ -568,7 +555,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
         return '<div class="sentence-container">' +
           '<div class="progress-info">' +
-            '<div><strong>' + blockNumber + '</strong> - Sentence ' + sentenceNumber + ' of ' + (blockNumber === 'Practice' ? '3' : '20') + '</div>' +
+            '<div><strong>' + blockNumber + '</strong> - Sentence ' + sentenceNumber + ' of ' + (blockNumber === 'Practice' ? '2' : '20') + '</div>' +
           '</div>' +
           '<h3>Click words in order (1-5) to unscramble the sentence:</h3>' +
           '<div class="word-container">' + wordButtons + '</div>' +
@@ -725,7 +712,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
         '<h2 style="text-align: center;">Practice Rounds</h2>' +
         '<br>' +
         '<p>Let\'s start with a few practice sentences to get familiar with the task.</p>' +
-        '<p>You will see 3 practice sentences. Take your time to understand how the task works.</p>' +
+        '<p>You will see 2 practice sentences. Take your time to understand how the task works.</p>' +
         '<p><strong>Remember:</strong> Click 5 words in the order you want them to appear to form a sentence.</p>' +
         '<br>' +
         '<p style="text-align: center;"><strong>Press SPACEBAR to start the practice.</strong></p>' +
