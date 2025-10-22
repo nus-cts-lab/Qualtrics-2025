@@ -671,6 +671,9 @@ Qualtrics.SurveyEngine.addOnload(function () {
           '<div class="comprehension-question">' + scenario.question + '</div>' +
           '</div>',
         choices: ['Yes', 'No'],
+        trial_duration: 1000,
+        response_ends_trial: true,
+        post_trial_gap: 0,
         on_finish: function(data) {
           var userAnswer;
           var buttonIndex = data.button_pressed !== undefined ? data.button_pressed : data.response;
@@ -685,23 +688,8 @@ Qualtrics.SurveyEngine.addOnload(function () {
           data.user_answer = userAnswer;
           data.comprehension_correct = comprehensionCorrect;
           data.correct_answer = scenario.correctAnswer;
-        }
-      });
-      
-      // Feedback
-      trials.push({
-        type: "html-keyboard-response",
-        stimulus: function() {
-          var feedbackText = comprehensionCorrect ? "Correct!" : "Incorrect!";
-          var feedbackClass = comprehensionCorrect ? "correct" : "incorrect";
           
-          return '<div class="comprehension-container">' +
-            '<div class="feedback ' + feedbackClass + '">' + feedbackText + '</div>' +
-            '<p style="color: black; text-align: center; margin-top: 30px;">Press SPACEBAR to continue</p>' +
-            '</div>';
-        },
-        choices: [" "],
-        on_finish: function(data) {
+          // Add metadata that was previously in the spacebar transition
           data.task = isPractice ? 'practice' : 'main';
           data.scenario_type = scenario.type || 'practice';
           data.final_reaction_time = reactionTime;
