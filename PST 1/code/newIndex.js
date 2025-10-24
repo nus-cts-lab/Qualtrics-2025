@@ -671,9 +671,8 @@ Qualtrics.SurveyEngine.addOnload(function () {
           '<div class="comprehension-question">' + scenario.question + '</div>' +
           '</div>',
         choices: ['Yes', 'No'],
-        trial_duration: 1000,
         response_ends_trial: true,
-        post_trial_gap: 0,
+        post_trial_gap: 500,
         on_finish: function(data) {
           var userAnswer;
           var buttonIndex = data.button_pressed !== undefined ? data.button_pressed : data.response;

@@ -121,7 +121,7 @@ The code has been embedded successfully!
 "dysphoric": "images/2141.jpg"
 
 // Update to (Qualtrics URL):
-"dysphoric": "https://university.qualtrics.com/ControlPanel/Graphic.php?IM=IM_xxxxxxxxxxxxx"
+"dysphoric": "https://nus.au1.qualtrics.com/ControlPanel/Graphic.php?IM=IM_r6ex52fKAlbJ7FL"
 ```
 
 ### Adding the Embedded Data
