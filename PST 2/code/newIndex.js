@@ -661,6 +661,8 @@ Qualtrics.SurveyEngine.addOnload(function () {
           data.input_word = window.currentInputWord || '';
           data.word_correct = window.currentWordCorrect || false;
           data.correct_word = scenario.correctWord;
+          data.task = isPractice ? 'practice' : 'main';
+          data.scenario_type = scenario.type || 'practice';
         }
       });
       
