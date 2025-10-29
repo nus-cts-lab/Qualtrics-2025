@@ -106,14 +106,18 @@ This will be the result of clicking on **"Embedded Data"**.
 
 ![alt text](assets/17.PNG)
 
-Here, what you need to do is to create 12 separate data entries named:
+Here, what you need to do is to create 15 separate data entries named:
 
 - `practice_reaction_times`
 - `practice_word_accuracy`
 - `practice_comprehension_accuracy`
+- `practice_input_words`
+- `practice_correct_words`
 - `main_reaction_times`
 - `main_word_accuracy`
 - `main_comprehension_accuracy`
+- `main_input_words`
+- `main_correct_words`
 - `main_scenario_types`
 - `list_assignment`
 - `practice_scenarios_completed`
@@ -141,12 +145,16 @@ The experiment collects the following data:
 - `practice_reaction_times`: Reaction times for word fragment recognition in milliseconds (semicolon separated)
 - `practice_word_accuracy`: Word completion accuracy (1 = correct, 0 = incorrect, semicolon separated)
 - `practice_comprehension_accuracy`: Comprehension question accuracy (1 = correct, 0 = incorrect, semicolon separated)
+- `practice_input_words`: Actual words typed by participants (semicolon separated)
+- `practice_correct_words`: Expected correct answers (semicolon separated)
 
 **Main Task Data:**
 
 - `main_reaction_times`: Reaction times for word fragment recognition in milliseconds (semicolon separated)
 - `main_word_accuracy`: Word completion accuracy (1 = correct, 0 = incorrect, semicolon separated)
 - `main_comprehension_accuracy`: Comprehension question accuracy (1 = correct, 0 = incorrect, semicolon separated)
+- `main_input_words`: Actual words typed by participants (semicolon separated)
+- `main_correct_words`: Expected correct answers (semicolon separated)
 - `main_scenario_types`: Scenario type categories (positive, depression, anxiety, semicolon separated)
 - `list_assignment`: Which stimulus list was used ("1" for Practice 1 + List 1)
 
