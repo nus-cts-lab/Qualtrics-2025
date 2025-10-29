@@ -106,7 +106,7 @@ This will be the result of clicking on **"Embedded Data"**.
 
 ![alt text](assets/17.PNG)
 
-Here, what you need to do is to create 15 separate data entries named:
+Here, what you need to do is to create 19 separate data entries named:
 
 - `practice_reaction_times`
 - `practice_word_accuracy`
@@ -123,6 +123,10 @@ Here, what you need to do is to create 15 separate data entries named:
 - `practice_scenarios_completed`
 - `main_scenarios_completed`
 - `total_scenarios_completed`
+- `device_info`
+- `browser_type`
+- `operating_system`
+- `device_type`
 
 When you do this, Qualtrics will automatically log these data, and it will be accessible through its `.csv` data file export. After you have included all data fields, it should look similar to this:
 
@@ -163,6 +167,13 @@ The experiment collects the following data:
 - `practice_scenarios_completed`: Number of practice scenarios completed successfully
 - `main_scenarios_completed`: Number of main scenarios completed successfully
 - `total_scenarios_completed`: Total number of scenarios completed (practice + main)
+
+**Device Information Data:**
+
+- `device_info`: Complete device information as JSON string (user agent, platform, language, window size, timezone, etc.)
+- `browser_type`: Browser name (Chrome, Firefox, Safari, Edge, Unknown)
+- `operating_system`: Operating system (Windows, macOS, Linux, Android, iOS, Unknown)
+- `device_type`: Device category (Desktop, Mobile, Tablet)
 
 **Scoring:**
 

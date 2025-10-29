@@ -156,8 +156,54 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
   function initExp() {
 
+    // Device detection function
+    function getDeviceInfo() {
+      var deviceInfo = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+        cookieEnabled: navigator.cookieEnabled,
+        onlineStatus: navigator.onLine,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Parse user agent for more readable info
+      var ua = navigator.userAgent;
+      deviceInfo.browser = 'Unknown';
+      deviceInfo.os = 'Unknown';
+      deviceInfo.deviceType = 'Desktop';
+      
+      // Browser detection
+      if (ua.includes('Chrome')) deviceInfo.browser = 'Chrome';
+      else if (ua.includes('Firefox')) deviceInfo.browser = 'Firefox';
+      else if (ua.includes('Safari')) deviceInfo.browser = 'Safari';
+      else if (ua.includes('Edge')) deviceInfo.browser = 'Edge';
+      
+      // OS detection
+      if (ua.includes('Windows')) deviceInfo.os = 'Windows';
+      else if (ua.includes('Mac')) deviceInfo.os = 'macOS';
+      else if (ua.includes('Linux')) deviceInfo.os = 'Linux';
+      else if (ua.includes('Android')) deviceInfo.os = 'Android';
+      else if (ua.includes('iOS')) deviceInfo.os = 'iOS';
+      
+      // Device type detection
+      if (ua.includes('Mobile') || ua.includes('Android') || ua.includes('iPhone')) {
+        deviceInfo.deviceType = 'Mobile';
+      } else if (ua.includes('Tablet') || ua.includes('iPad')) {
+        deviceInfo.deviceType = 'Tablet';
+      }
+      
+      return deviceInfo;
+    }
+
     // Get participant ID from Qualtrics
     var ppt = "${e://Field/PROLIFIC_PID}" || "PST1_" + Math.random().toString(36).substr(2, 9);
+    
+    // Capture device information
+    var deviceInfo = getDeviceInfo();
 
     // Practice scenarios (Practice 1)
     var practiceScenarios = [
@@ -751,6 +797,12 @@ Qualtrics.SurveyEngine.addOnload(function () {
         Qualtrics.SurveyEngine.setEmbeddedData("main_input_words", main_input_words.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("main_correct_words", main_correct_words.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("list_assignment", "1");
+        
+        // Save device information
+        Qualtrics.SurveyEngine.setEmbeddedData("device_info", JSON.stringify(deviceInfo));
+        Qualtrics.SurveyEngine.setEmbeddedData("browser_type", deviceInfo.browser);
+        Qualtrics.SurveyEngine.setEmbeddedData("operating_system", deviceInfo.os);
+        Qualtrics.SurveyEngine.setEmbeddedData("device_type", deviceInfo.deviceType);
         
         // Save scenario completion counts
         Qualtrics.SurveyEngine.setEmbeddedData("practice_scenarios_completed", practice_count);
