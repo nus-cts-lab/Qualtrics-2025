@@ -653,7 +653,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
             wordCorrect = inputWord === correctWord;
             
             // Store in global scope for on_finish
-            window.currentInputWord = inputWord;
+            window.currentInputWord = wordInput.value.trim();
             window.currentWordCorrect = wordCorrect;
           });
         },
@@ -717,6 +717,8 @@ Qualtrics.SurveyEngine.addOnload(function () {
         var practice_reaction_times = practice_trials.select('final_reaction_time').values;
         var practice_word_accuracy = practice_trials.select('final_word_correct').values;
         var practice_comprehension_accuracy = practice_trials.select('final_comprehension_correct').values;
+        var practice_input_words = practice_trials.select('input_word').values;
+        var practice_correct_words = practice_trials.select('correct_word').values;
         
         // Extract main task data using jsPsych data filtering  
         var main_trials = jsPsych.data.get().filter({ task: 'main' });
@@ -724,6 +726,8 @@ Qualtrics.SurveyEngine.addOnload(function () {
         var main_word_accuracy = main_trials.select('final_word_correct').values;
         var main_comprehension_accuracy = main_trials.select('final_comprehension_correct').values;
         var main_scenario_types = main_trials.select('scenario_type').values;
+        var main_input_words = main_trials.select('input_word').values;
+        var main_correct_words = main_trials.select('correct_word').values;
         
         // Calculate scenario completion counts
         var practice_count = practice_trials.count();
@@ -735,11 +739,15 @@ Qualtrics.SurveyEngine.addOnload(function () {
         Qualtrics.SurveyEngine.setEmbeddedData("practice_reaction_times", practice_reaction_times.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("practice_word_accuracy", practice_word_accuracy.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("practice_comprehension_accuracy", practice_comprehension_accuracy.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_input_words", practice_input_words.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("practice_correct_words", practice_correct_words.join(';'));
         
         Qualtrics.SurveyEngine.setEmbeddedData("main_reaction_times", main_reaction_times.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("main_word_accuracy", main_word_accuracy.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("main_comprehension_accuracy", main_comprehension_accuracy.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("main_scenario_types", main_scenario_types.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_input_words", main_input_words.join(';'));
+        Qualtrics.SurveyEngine.setEmbeddedData("main_correct_words", main_correct_words.join(';'));
         Qualtrics.SurveyEngine.setEmbeddedData("list_assignment", "2");
         
         // Save scenario completion counts
