@@ -28,7 +28,7 @@ For any questions, please open new issues on this repository - and if you wish t
 
 ## Embedding Instructions
 
-The Ambiguous Scenarios Task can be embedded into a Qualtrics survey following the steps below.
+The Probes Scenario Task can be embedded into a Qualtrics survey following the steps below.
 
 ### Adding the Task as a Question
 
@@ -64,7 +64,7 @@ Once you have done so, the question should now look like this.
 
 ![alt text](assets/8.PNG)
 
-### Adding the Ambiguous Scenarios Task Code
+### Adding the Probes Scenario Task Code
 
 Now, go to the left navigation bar. You should see several options like below (if you do not see them, try clicking on the question once more). Here, click on **"JavaScript"**.
 
@@ -90,7 +90,7 @@ The **"Survey flow"** page should look something like this. This is an example t
 
 ![alt text](assets/13.PNG)
 
-Here, there should be a block for your Ambiguous Scenarios Task (or whatever it is named). On the block containing your Ambiguous Scenarios Task, click on **"Add Below"**.
+Here, there should be a block for your Probes Scenario Task (or whatever it is named). On the block containing your Probes Scenario Task, click on **"Add Below"**.
 
 ![alt text](assets/14.PNG)
 
@@ -106,14 +106,18 @@ This will be the result of clicking on **"Embedded Data"**.
 
 ![alt text](assets/17.PNG)
 
-Here, what you need to do is to create 12 separate data entries named:
+Here, what you need to do is to create 15 separate data entries named:
 
 - `practice_reaction_times`
 - `practice_word_accuracy`
 - `practice_comprehension_accuracy`
+- `practice_input_words`
+- `practice_correct_words`
 - `main_reaction_times`
 - `main_word_accuracy`
 - `main_comprehension_accuracy`
+- `main_input_words`
+- `main_correct_words`
 - `main_scenario_types`
 - `list_assignment`
 - `practice_scenarios_completed`
@@ -138,18 +142,21 @@ The experiment collects the following data:
 
 **Practice Phase Data:**
 
-- `practice_pleasantness_ratings`: Pleasantness ratings for practice scenarios (1-9 scale, semicolon separated)
-- `practice_outcome_descriptions`: Text descriptions of imagined outcomes (pipe | separated)
-- `practice_response_times`: Response times in milliseconds (semicolon separated)
+- `practice_reaction_times`: Reaction times for word fragment recognition in milliseconds (semicolon separated)
+- `practice_word_accuracy`: Word completion accuracy (1 = correct, 0 = incorrect, semicolon separated)
+- `practice_comprehension_accuracy`: Comprehension question accuracy (1 = correct, 0 = incorrect, semicolon separated)
+- `practice_input_words`: Actual words typed by participants (semicolon separated)
+- `practice_correct_words`: Expected correct answers (semicolon separated)
 
 **Main Task Data:**
 
-- `main_pleasantness_ratings`: Pleasantness ratings for main scenarios (1-9 scale, semicolon separated)
-- `main_outcome_descriptions`: Text descriptions of imagined outcomes (pipe | separated)
-- `main_response_times`: Response times in milliseconds (semicolon separated)
-- `main_scenario_ids`: Scenario identification numbers (semicolon separated)
-- `main_scenario_themes`: Theme categories (Self_Depression, Future_Depression, Uncertainty_Anxiety, etc., semicolon separated)
-- `list_assignment`: Which stimulus list was used ("1" for List 1, "2" for List 2)
+- `main_reaction_times`: Reaction times for word fragment recognition in milliseconds (semicolon separated)
+- `main_word_accuracy`: Word completion accuracy (1 = correct, 0 = incorrect, semicolon separated)
+- `main_comprehension_accuracy`: Comprehension question accuracy (1 = correct, 0 = incorrect, semicolon separated)
+- `main_input_words`: Actual words typed by participants (semicolon separated)
+- `main_correct_words`: Expected correct answers (semicolon separated)
+- `main_scenario_types`: Scenario type categories (positive, depression, anxiety, semicolon separated)
+- `list_assignment`: Which stimulus list was used ("2" for Practice 2 + List 2)
 
 **Completion Tracking Data:**
 
@@ -157,36 +164,46 @@ The experiment collects the following data:
 - `main_scenarios_completed`: Number of main scenarios completed successfully
 - `total_scenarios_completed`: Total number of scenarios completed (practice + main)
 
-**Rating Scale:**
+**Scoring:**
 
-- `1`: Extremely Unpleasant
-- `2-8`: Intermediate ratings
-- `9`: Extremely Pleasant
+- **Reaction Times**: Faster times may indicate stronger automatic processing of scenario-congruent word fragments
+- **Word Accuracy**: Measures attention and comprehension during task performance
+- **Comprehension Accuracy**: Validates that participants are attending to and understanding the scenarios
 
 ## Advanced Instructions
 
-The code for the Ambiguous Scenarios Task is contained inside `code/newIndex.js` file.
+The code for the Probes Scenario Task is contained inside `code/newIndex.js` file.
 
 **Customizing Scenarios:**
-To modify scenarios, locate the `practiceScenarios` and `mainScenarios` arrays starting around line 123. Each main scenario follows this format:
+To modify scenarios, locate the `practiceScenarios` and `mainScenarios` arrays starting around line 162. Each main scenario follows this format:
 
 ```js
 {
-  text: "You are cooking dinner and taste a spoonful of your soup. The flavour is stronger than you expected.",
-  theme: "Self",
-  type: "Depression"
+  sentence1: "You buy a new smartphone, but when you get home,…",
+  sentence2: "you decide that you don't like it. You return to the store and get",
+  sentence3: "your money back. The store assistant is very…",
+  fragment: "h_lpful",
+  correctWord: "helpful",
+  question: "Did the store assistant make the return process easy for you?",
+  correctAnswer: "yes",
+  type: "positive"
 }
 ```
 
-- `text`: The scenario text presented to participants
-- `theme`: Theme category (Self, Future, Experiences, Uncertainty, Threat expectancy, Worry, Social evaluation)
-- `type`: Type category (Depression or Anxiety)
+- `sentence1`, `sentence2`, `sentence3`: Sequential sentences presented for 3 seconds each
+- `fragment`: Word fragment with underscores representing missing letters
+- `correctWord`: Complete word for spell-checking validation
+- `question`: Comprehension question about the scenario content
+- `correctAnswer`: "yes" or "no" for the comprehension question
+- `type`: Scenario category ("positive", "depression", "anxiety")
 
 **Customizing Timing:**
 
-- Scenario display duration: Change `trial_duration: 5000` (lines 256, 264, 345, 353) for different display times
-- Rating phase: No time limit by default
+- Sentence display duration: Each sentence displays for 3 seconds (lines 578, 587, 597)
+- Word fragment phase: No time limit, participants press spacebar when ready
+- Word input phase: No time limit, participants advance when form is complete
+- Comprehension phase: No time limit, participants click Yes/No buttons
 
 **Customizing Stimuli Lists:**
 
-This is AST 1 which uses Practice List 1 + Main List 1. For AST 2 implementation with Practice List 2 + Main List 2, see the AST 2 folder.
+This is PST 2 which uses Practice 2 + List 2. For PST 1 implementation with Practice 1 + List 1, see the PST 1 folder.
