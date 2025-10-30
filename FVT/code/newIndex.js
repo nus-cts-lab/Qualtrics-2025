@@ -133,10 +133,10 @@ Qualtrics.SurveyEngine.addOnload(function () {
         "imageViewingTime": 10000,
         "spotlightRadius": 150,
         "positions": [
-          {"name": "top-left", "x": -0.3, "y": 0.2},
-          {"name": "top-right", "x": 0.3, "y": 0.2},
-          {"name": "bottom-left", "x": -0.3, "y": -0.2},
-          {"name": "bottom-right", "x": 0.3, "y": -0.2}
+          {"name": "top-left", "x": -0.2, "y": 0.15},
+          {"name": "top-right", "x": 0.2, "y": 0.15},
+          {"name": "bottom-left", "x": -0.2, "y": -0.15},
+          {"name": "bottom-right", "x": 0.2, "y": -0.15}
         ]
       },
       "imageTrials": [
@@ -280,6 +280,35 @@ Qualtrics.SurveyEngine.addOnload(function () {
       return arr;
     }
 
+    // Calculate safe positioning to prevent image overlap
+    function calculateSafePositions() {
+      var imageSize = 300; // Fixed image size
+      var minHorizontalGap = 100; // Minimum horizontal gap between images
+      var minVerticalGap = 80; // Minimum vertical gap between images
+      
+      var minHorizontalDistance = (imageSize + minHorizontalGap) / 2; // Minimum horizontal distance from center
+      var minVerticalDistance = (imageSize + minVerticalGap) / 2; // Minimum vertical distance from center
+      
+      // Calculate maximum safe relative distances
+      var maxHorizontal = Math.min(0.3, minHorizontalDistance / window.innerWidth);
+      var maxVertical = Math.min(0.2, minVerticalDistance / window.innerHeight);
+      
+      // Ensure we don't get too close to screen edges
+      var edgeBuffer = imageSize / 2 + 20; // Half image size + buffer
+      var maxEdgeHorizontal = (window.innerWidth / 2 - edgeBuffer) / window.innerWidth;
+      var maxEdgeVertical = (window.innerHeight / 2 - edgeBuffer) / window.innerHeight;
+      
+      maxHorizontal = Math.min(maxHorizontal, maxEdgeHorizontal);
+      maxVertical = Math.min(maxVertical, maxEdgeVertical);
+      
+      return [
+        {"name": "top-left", "x": -maxHorizontal, "y": maxVertical},
+        {"name": "top-right", "x": maxHorizontal, "y": maxVertical},
+        {"name": "bottom-left", "x": -maxHorizontal, "y": -maxVertical},
+        {"name": "bottom-right", "x": maxHorizontal, "y": -maxVertical}
+      ];
+    }
+
     // Generate participant ID
     var participantId = "${e://Field/PROLIFIC_PID}" || "FVT_" + Math.random().toString(36).substring(2, 11);
     var sessionId = "1";
@@ -387,7 +416,7 @@ Qualtrics.SurveyEngine.addOnload(function () {
 
         // Position images in quadrants
         var container = document.getElementById('image-container');
-        var positions = experimentConfig.config.positions.slice();
+        var positions = calculateSafePositions();
         shuffleArray(positions);
         
         var imageKeys = Object.keys(trial.images);
@@ -525,49 +554,73 @@ Qualtrics.SurveyEngine.addOnload(function () {
         participantInfo.end_time = new Date().toISOString();
         participantInfo.total_trials_completed = trialData.length;
 
-        // Convert data to CSV format for Qualtrics
-        function arrayToCSV(array) {
-          if (array.length === 0) return '';
-          
-          var headers = Object.keys(array[0]);
-          var csvContent = headers.join(',') + '\n';
-          
-          array.forEach(function(row) {
-            var values = headers.map(function(header) {
-              var value = row[header];
-              if (typeof value === 'object') {
-                value = JSON.stringify(value);
-              }
-              return '"' + String(value).replace(/"/g, '""') + '"';
-            });
-            csvContent += values.join(',') + '\n';
-          });
-          
-          return csvContent;
-        }
-
-        // Generate CSV data
-        var trialDataCSV = arrayToCSV(trialData);
-        var mouseDataCSV = arrayToCSV(mouseData);
-        var participantInfoCSV = arrayToCSV([participantInfo]);
-
-        // Save data to Qualtrics embedded data
-        Qualtrics.SurveyEngine.setEmbeddedData("fvt_participant_id", participantId);
-        Qualtrics.SurveyEngine.setEmbeddedData("fvt_session_id", sessionId);
-        Qualtrics.SurveyEngine.setEmbeddedData("fvt_trials_completed", trialData.length);
-        Qualtrics.SurveyEngine.setEmbeddedData("fvt_mouse_events_recorded", mouseData.length);
+        // Prepare participant info JSON
+        var participantInfoData = {
+          participant_id: participantId,
+          session_id: sessionId,
+          start_time: participantInfo.start_time,
+          end_time: participantInfo.end_time,
+          browser_info: participantInfo.browser_info,
+          screen_resolution: participantInfo.screen_resolution
+        };
         
-        // Store CSV data
-        Qualtrics.SurveyEngine.setEmbeddedData("trial_data_csv", trialDataCSV);
-        Qualtrics.SurveyEngine.setEmbeddedData("mouse_data_csv", mouseDataCSV);
-        Qualtrics.SurveyEngine.setEmbeddedData("participant_info_csv", participantInfoCSV);
+        // Prepare trial metadata JSON
+        var trialMetadata = {
+          trials: trialData
+        };
+
+        // Group mouse data by trial for separate columns
+        var mouseDataByTrial = {};
+        
+        // Initialize trial arrays
+        for (var i = 1; i <= trialData.length; i++) {
+          mouseDataByTrial[i] = [];
+        }
+        
+        // Group mouse events by trial
+        mouseData.forEach(function(event) {
+          var trialNum = event.trial_number;
+          if (mouseDataByTrial[trialNum]) {
+            mouseDataByTrial[trialNum].push({
+              t: event.timestamp_relative,
+              x: event.mouse_x,
+              y: event.mouse_y
+            });
+          }
+        });
+
+        // Prepare completion stats
+        var emotionalTrials = trialData.filter(function(trial) { return trial.trial_type === 'emotional'; }).length;
+        var fillerTrials = trialData.filter(function(trial) { return trial.trial_type === 'filler'; }).length;
+        
+        var completionStats = {
+          trials_completed: trialData.length,
+          emotional_trials: emotionalTrials,
+          filler_trials: fillerTrials,
+          total_mouse_events: mouseData.length,
+          avg_events_per_trial: trialData.length > 0 ? Math.round(mouseData.length / trialData.length * 100) / 100 : 0
+        };
+
+        // Save data to Qualtrics embedded data as JSON strings
+        Qualtrics.SurveyEngine.setEmbeddedData("fvt_participant_id", participantId);
+        Qualtrics.SurveyEngine.setEmbeddedData("fvt_participant_info", JSON.stringify(participantInfoData));
+        Qualtrics.SurveyEngine.setEmbeddedData("fvt_completion_stats", JSON.stringify(completionStats));
+        Qualtrics.SurveyEngine.setEmbeddedData("fvt_trial_metadata", JSON.stringify(trialMetadata));
+        
+        // Save mouse data for each trial in separate columns
+        for (var trialNum = 1; trialNum <= trialData.length; trialNum++) {
+          var trialMouseData = mouseDataByTrial[trialNum] || [];
+          Qualtrics.SurveyEngine.setEmbeddedData("fvt_mouse_trial_" + trialNum, JSON.stringify(trialMouseData));
+        }
 
         console.log("Free Viewing Task Data Export Summary:");
         console.log("Participant ID:", participantId);
         console.log("Trials completed:", trialData.length);
         console.log("Mouse events recorded:", mouseData.length);
-        console.log("Trial data CSV length:", trialDataCSV.length);
-        console.log("Mouse data CSV length:", mouseDataCSV.length);
+        console.log("Participant info JSON length:", JSON.stringify(participantInfoData).length);
+        console.log("Trial metadata JSON length:", JSON.stringify(trialMetadata).length);
+        console.log("Mouse data stored in", trialData.length, "separate trial columns");
+        console.log("Completion stats:", completionStats);
 
         // Clear the stage
         jQuery('#display_stage').remove();

@@ -150,15 +150,22 @@ This will be the result of clicking on **"Embedded Data"**.
 
 ![alt text](assets/17.PNG)
 
-Here, what you need to do is to create 7 separate data entries named:
+Here, what you need to do is to create embedded data entries for:
 
+**Basic Fields (4 entries):**
 - `fvt_participant_id`
-- `fvt_session_id`
-- `fvt_trials_completed`
-- `fvt_mouse_events_recorded`
-- `trial_data_csv`
-- `mouse_data_csv`
-- `participant_info_csv`
+- `fvt_participant_info`
+- `fvt_completion_stats`
+- `fvt_trial_metadata`
+
+**Mouse Data Fields (20 entries - one per trial):**
+- `fvt_mouse_trial_1`
+- `fvt_mouse_trial_2`
+- `fvt_mouse_trial_3`
+- ... (continue through)
+- `fvt_mouse_trial_20`
+
+**Total: 24 embedded data fields**
 
 When you do this, Qualtrics will automatically log these data, and it will be accessible through its `.csv` data file export. After you have included all data fields, it should look similar to this:
 
@@ -174,69 +181,88 @@ And you're all set! Head back to the survey tab, and publish the survey.
 
 ## Data Output
 
-The experiment collects comprehensive data across three main files:
+The experiment collects comprehensive data across 24 embedded data fields:
 
-### Trial Data (`trial_data_csv`)
+### Participant Information (`fvt_participant_info`)
 
-Contains trial-level metadata for each of the 20 trials:
+Contains participant and session metadata as a JSON string:
 
-- `participant_id`: Unique participant identifier
-- `session_id`: Session number (default: "1")
-- `trial_number`: Trial sequence (1-20)
-- `trial_type`: "emotional" or "filler"
-- `trial_start_time`: ISO timestamp when trial began
-- `trial_duration`: Length of trial (10000ms)
-- `images_shown`: Array of image file paths displayed
-- `image_positions`: Mapping of image categories to screen quadrants
-- `image_categories`: Category labels for each image
-- `timestamp`: Overall timestamp for the trial
-
-**Example trial data row:**
-
-```csv
-participant_id,session_id,trial_number,trial_type,trial_start_time,trial_duration,images_shown,image_positions,image_categories,timestamp
-FVT_abc123,1,1,emotional,2024-01-15T10:30:45.123Z,10000,"[""images/2141.jpg"",""images/1120.jpg"",""images/1340.jpg"",""images/2038.jpg""]","{""dysphoric"":""top-left"",""threat"":""top-right"",""positive"":""bottom-left"",""neutral"":""bottom-right""}","{""dysphoric"":""dysphoric"",""threat"":""threat"",""positive"":""positive"",""neutral"":""neutral""}",2024-01-15T10:30:45.123Z
+```json
+{
+  "participant_id": "FVT_abc123",
+  "session_id": "1",
+  "start_time": "2024-01-15T10:30:00.000Z",
+  "end_time": "2024-01-15T10:33:45.123Z",
+  "browser_info": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+  "screen_resolution": "1920x1080"
+}
 ```
 
-### Mouse Tracking Data (`mouse_data_csv`)
+### Trial Metadata (`fvt_trial_metadata`)
 
-Contains detailed cursor movement data sampled during mouse movement:
+Contains detailed information about each trial as a JSON string:
 
-- `participant_id`: Unique participant identifier
-- `session_id`: Session number
-- `trial_number`: Which trial the mouse data belongs to
-- `timestamp_relative`: Milliseconds since trial start
-- `timestamp_absolute`: ISO timestamp of mouse event
-- `mouse_x`: X-coordinate of cursor position
-- `mouse_y`: Y-coordinate of cursor position
-- `viewport_width`: Browser window width
-- `viewport_height`: Browser window height
-
-**Example mouse data row:**
-
-```csv
-participant_id,session_id,trial_number,timestamp_relative,timestamp_absolute,mouse_x,mouse_y,viewport_width,viewport_height
-FVT_abc123,1,1,1250,2024-01-15T10:30:46.373Z,640,480,1920,1080
+```json
+{
+  "trials": [
+    {
+      "participant_id": "FVT_abc123",
+      "session_id": "1",
+      "trial_number": 1,
+      "trial_type": "emotional",
+      "trial_start_time": "2024-01-15T10:30:45.123Z",
+      "trial_duration": 10000,
+      "images_shown": ["url1", "url2", "url3", "url4"],
+      "image_positions": {"dysphoric": "top-left", "threat": "top-right", "positive": "bottom-left", "neutral": "bottom-right"},
+      "image_categories": {"dysphoric": "dysphoric", "threat": "threat", "positive": "positive", "neutral": "neutral"},
+      "timestamp": "2024-01-15T10:30:45.123Z"
+    }
+  ]
+}
 ```
 
-### Participant Information (`participant_info_csv`)
+### Mouse Tracking Data (Per Trial)
 
-Contains session-level participant metadata:
+Each trial's mouse data is stored in a separate column (`fvt_mouse_trial_1` through `fvt_mouse_trial_20`) as JSON arrays:
 
-- `participant_id`: Unique participant identifier
-- `session_id`: Session number
-- `start_time`: ISO timestamp when experiment began
-- `end_time`: ISO timestamp when experiment completed
-- `browser_info`: User agent string (browser/OS information)
-- `screen_resolution`: Display resolution (e.g., "1920x1080")
-- `total_trials_completed`: Number of trials finished
-
-**Example participant info row:**
-
-```csv
-participant_id,session_id,start_time,end_time,browser_info,screen_resolution,total_trials_completed
-FVT_abc123,1,2024-01-15T10:30:00.000Z,2024-01-15T10:33:45.123Z,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",1920x1080,20
+**Example `fvt_mouse_trial_1`:**
+```json
+[
+  {"t": 1250, "x": 640, "y": 480},
+  {"t": 1300, "x": 645, "y": 485},
+  {"t": 1350, "x": 650, "y": 490},
+  {"t": 1400, "x": 655, "y": 495}
+]
 ```
+
+**Data Fields:**
+- `t`: Milliseconds since trial start
+- `x`: X-coordinate of cursor position  
+- `y`: Y-coordinate of cursor position
+
+**Benefits of Separate Columns:**
+- Each trial's mouse data isolated in its own Excel column
+- Prevents data overflow issues
+- Allows trial-by-trial analysis
+- Preserves all mouse movement data
+
+### Completion Statistics (`fvt_completion_stats`)
+
+Contains summary statistics as a JSON string:
+
+```json
+{
+  "trials_completed": 20,
+  "emotional_trials": 12,
+  "filler_trials": 8,
+  "total_mouse_events": 1250,
+  "avg_events_per_trial": 62.5
+}
+```
+
+### Participant ID (`fvt_participant_id`)
+
+Unique participant identifier (string): `"FVT_abc123"`
 
 ## Data Analysis Recommendations
 
